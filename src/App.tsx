@@ -55,8 +55,8 @@ export default function App() {
           </div>
         </aside>
 
-        <main className="min-w-0 flex-1 overflow-y-auto p-6">
-          <SignaturePreview html={html} />
+        <main className="flex min-w-0 flex-1 flex-col items-center justify-center overflow-y-auto p-6">
+          <SignaturePreview html={html} onReset={() => setFields(EMPTY_SIGNATURE_FIELDS)} />
         </main>
       </div>
     </div>

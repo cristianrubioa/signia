@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 interface Props {
   html: string;
+  onReset: () => void;
 }
 
 type CopyStatus = "idle" | "copied-rich" | "copied-html" | "error";
@@ -18,10 +19,10 @@ function toPlainText(html: string): string {
 }
 
 function previewDocument(html: string): string {
-  return `<!doctype html><html><body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;">${html}</body></html>`;
+  return `<!doctype html><html><body style="margin:0;padding:40px 20px 20px;font-family:Arial,Helvetica,sans-serif;">${html}</body></html>`;
 }
 
-export default function SignaturePreview({ html }: Props) {
+export default function SignaturePreview({ html, onReset }: Props) {
   const [status, setStatus] = useState<CopyStatus>("idle");
 
   useEffect(() => {
@@ -50,18 +51,42 @@ export default function SignaturePreview({ html }: Props) {
   }
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-4">
-      <div className="rounded-lg border border-gray-200 bg-white">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+        <div className="flex items-center gap-1.5 border-b border-gray-200 px-4 py-3.5">
+          <span className="h-3 w-3 rounded-full bg-red-400" />
+          <span className="h-3 w-3 rounded-full bg-amber-400" />
+          <span className="h-3 w-3 rounded-full bg-green-500" />
+        </div>
+        <div className="border-b border-gray-200 px-4 py-3 text-sm text-gray-500">
+          <p>
+            <span className="font-semibold text-gray-700">To:</span>{" "}
+            <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-xs font-medium text-teal-700">
+              Your Recipient
+            </span>
+          </p>
+          <p className="mt-1">
+            <span className="font-semibold text-gray-700">Subject:</span> Check out my new Email Signature
+          </p>
+        </div>
         {html ? (
-          <iframe title="Signature preview" srcDoc={previewDocument(html)} className="h-56 w-full rounded-lg" />
+          <iframe title="Signature preview" srcDoc={previewDocument(html)} className="h-80 w-full" />
         ) : (
-          <div className="flex h-56 items-center justify-center text-sm text-gray-400">
+          <div className="flex h-80 items-center justify-center text-sm text-gray-400">
             Enter your name to see a preview
           </div>
         )}
       </div>
 
       <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={onReset}
+          className="flex shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+        >
+          <i className="fa-solid fa-arrow-rotate-right" />
+          Reset
+        </button>
         <button
           type="button"
           onClick={handleCopySignature}
