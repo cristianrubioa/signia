@@ -56,7 +56,7 @@ function Dropdown({
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
-          className={`${INPUT_CLASS} flex items-center justify-between text-left`}
+          className={`${INPUT_CLASS} flex items-center justify-between text-left transition-colors hover:bg-gray-50`}
         >
           <span>{selected?.label}</span>
           <i className={`fa-solid fa-chevron-down text-xs text-gray-400 transition-transform ${open ? "rotate-180" : ""}`} />
@@ -141,7 +141,7 @@ export default function SignatureStylePanel({
 
       <div className={`${SECTION_CLASS} pb-5`} style={SECTION_STYLE}>
         <p className="crubio-section-label text-teal-600 mb-2">Accent color</p>
-        <div className="flex flex-wrap items-center gap-1">
+        <div className="flex flex-wrap items-center gap-0.5">
           {ACCENT_COLOR_SWATCHES.map((color) => (
             <button
               key={color}
@@ -149,13 +149,17 @@ export default function SignatureStylePanel({
               aria-label={`Use accent color ${color}`}
               onClick={() => onAccentColorChange(color)}
               style={{ backgroundColor: color }}
-              className={`h-[34px] w-[34px] rounded-full border-2 transition-transform hover:scale-110 ${
-                accentColor === color ? "border-gray-800" : "border-transparent"
-              }`}
-            />
+              className="relative h-[32px] w-[32px] rounded-full border-2 border-transparent transition-transform hover:scale-110"
+            >
+              {accentColor === color && (
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <i className="fa-solid fa-check text-xs text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]" />
+                </span>
+              )}
+            </button>
           ))}
           <span
-            className={`relative h-[34px] w-[34px] overflow-hidden rounded-full border-2 flex items-center justify-center ${
+            className={`relative h-[32px] w-[32px] overflow-hidden rounded-full border-2 flex items-center justify-center transition-transform hover:scale-110 ${
               isCustomColorActive ? "border-solid border-gray-800" : "border-dashed border-gray-300"
             }`}
           >

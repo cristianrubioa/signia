@@ -70,6 +70,36 @@ export default function App() {
 
   const html = useMemo(() => buildSignatureHtml(fields, template, accentColor), [fields, template, accentColor]);
 
+  // ponytail: fixed 48px matches <main>'s p-6 padding on both axes; revisit if that padding changes.
+  const MAIN_PADDING_PX = 48;
+  const mainRef = useRef<HTMLElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [zoom, setZoom] = useState(1);
+  const [maxZoom, setMaxZoom] = useState(1);
+
+  useEffect(() => {
+    const mainEl = mainRef.current;
+    const previewEl = previewRef.current;
+    if (!mainEl || !previewEl) return;
+
+    function recalcMaxZoom() {
+      const availableWidth = mainEl!.clientWidth - MAIN_PADDING_PX;
+      const availableHeight = mainEl!.clientHeight - MAIN_PADDING_PX;
+      const naturalWidth = previewEl!.offsetWidth;
+      const naturalHeight = previewEl!.offsetHeight;
+      if (naturalWidth === 0 || naturalHeight === 0) return;
+      const next = Math.max(1, Math.min(availableWidth / naturalWidth, availableHeight / naturalHeight));
+      setMaxZoom(next);
+      setZoom((z) => Math.min(z, next));
+    }
+
+    recalcMaxZoom();
+    const observer = new ResizeObserver(recalcMaxZoom);
+    observer.observe(mainEl);
+    observer.observe(previewEl);
+    return () => observer.disconnect();
+  }, [html]);
+
   return (
     <div className="flex h-screen flex-col bg-white">
       <header className="flex h-[var(--header-h)] shrink-0 items-center gap-3 border-b border-gray-200 px-6">
@@ -108,12 +138,35 @@ export default function App() {
           </div>
         </aside>
 
-        <main className="flex min-w-0 flex-1 flex-col items-center justify-center overflow-y-auto bg-gray-50 p-6">
+        <main
+          ref={mainRef}
+          className="relative flex min-w-0 flex-1 flex-col items-center justify-center overflow-y-auto bg-gray-50 p-6"
+        >
           <SignaturePreview
             html={html}
             onReset={() => updateFields(EMPTY_SIGNATURE_FIELDS)}
             onResetToDefault={() => applyState(DEFAULT_SIGNATURE_STATE)}
+            measureRef={previewRef}
+            style={{ transform: `scale(${zoom})` }}
           />
+
+          {maxZoom > 1 && (
+            <div className="absolute bottom-4 right-4 hidden items-center gap-3 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm md:flex">
+              <i className="fa-solid fa-magnifying-glass-minus text-xs text-gray-400" />
+              <input
+                type="range"
+                min={1}
+                max={maxZoom}
+                step={0.01}
+                value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))}
+                className="w-32"
+                aria-label="Zoom preview"
+              />
+              <i className="fa-solid fa-magnifying-glass-plus text-xs text-gray-400" />
+              <span className="w-10 text-right text-xs font-medium text-gray-500">{Math.round(zoom * 100)}%</span>
+            </div>
+          )}
         </main>
 
         <aside className="flex w-[var(--panel-w)] shrink-0 flex-col border-l border-gray-200">

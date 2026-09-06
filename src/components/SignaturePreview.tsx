@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties, type RefObject } from "react";
 
 interface Props {
   html: string;
   onReset: () => void;
   onResetToDefault: () => void;
+  measureRef?: RefObject<HTMLDivElement | null>;
+  style?: CSSProperties;
 }
 
 type CopyStatus = "idle" | "copied-rich" | "copied-html" | "error";
@@ -25,7 +27,7 @@ function previewDocument(html: string): string {
   return `<!doctype html><html><head><style>html,body{margin:0;height:100%;overflow:hidden;}</style></head><body style="padding:64px 20px 24px;font-family:Arial,Helvetica,sans-serif;">${html}</body></html>`;
 }
 
-export default function SignaturePreview({ html, onReset, onResetToDefault }: Props) {
+export default function SignaturePreview({ html, onReset, onResetToDefault, measureRef, style }: Props) {
   const [status, setStatus] = useState<CopyStatus>("idle");
 
   useEffect(() => {
@@ -54,8 +56,8 @@ export default function SignaturePreview({ html, onReset, onResetToDefault }: Pr
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+    <div ref={measureRef} className="mx-auto flex w-full max-w-3xl flex-col gap-8" style={style}>
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
         <div className="flex items-center gap-1.5 border-b border-gray-200 px-4 py-3.5">
           <span className="h-3 w-3 rounded-full bg-red-400" />
           <span className="h-3 w-3 rounded-full bg-amber-400" />

@@ -97,7 +97,7 @@ export const SIGNATURE_TEMPLATES: { value: SignatureTemplate; label: string }[] 
   { value: "accent-bar", label: "Accent bar" },
 ];
 
-export const ACCENT_COLOR_SWATCHES = ["#0d9488", "#2563eb", "#dc2626", "#6b7280", "#c026d3", "#d97706"];
+export const ACCENT_COLOR_SWATCHES = ["#0d9488", "#2563eb", "#dc2626", "#6b7280", "#c026d3", "#d97706", "#000000"];
 export const DEFAULT_ACCENT_COLOR = ACCENT_COLOR_SWATCHES[0];
 
 export interface SignatureState {

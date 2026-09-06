@@ -132,7 +132,7 @@ export default function SocialNetworksSection({ fields, onFieldsChange }: Props)
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
-              className={`${INPUT_CLASS} flex items-center justify-between font-medium text-teal-600`}
+              className={`${INPUT_CLASS} flex items-center justify-between font-medium text-teal-600 transition-colors hover:bg-gray-50`}
             >
               <span className="flex items-center gap-2">
                 <i className="fa-solid fa-plus text-xs" />
