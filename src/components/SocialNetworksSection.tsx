@@ -11,10 +11,10 @@ type CustomLinkOption = { kind: "custom"; key: "custom"; label: string };
 type SocialOption = SocialNetworkOption | CustomLinkOption;
 
 const SOCIAL_OPTIONS: SocialOption[] = [
-  { kind: "network", key: "facebookUrl", label: "Facebook", placeholder: "facebook.com/tuperfil" },
-  { kind: "network", key: "instagramUrl", label: "Instagram", placeholder: "instagram.com/tuperfil" },
-  { kind: "network", key: "xUrl", label: "X", placeholder: "x.com/tuperfil" },
-  { kind: "network", key: "youtubeUrl", label: "YouTube", placeholder: "youtube.com/@tucanal" },
+  { kind: "network", key: "facebookUrl", label: "Facebook", placeholder: "facebook.com/yourprofile" },
+  { kind: "network", key: "instagramUrl", label: "Instagram", placeholder: "instagram.com/yourprofile" },
+  { kind: "network", key: "xUrl", label: "X", placeholder: "x.com/yourprofile" },
+  { kind: "network", key: "youtubeUrl", label: "YouTube", placeholder: "youtube.com/@yourchannel" },
   { kind: "custom", key: "custom", label: "Custom link" },
 ];
 
