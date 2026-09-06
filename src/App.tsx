@@ -1,25 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import ImportExportSection from "./components/ImportExportSection";
 import SignatureForm from "./components/SignatureForm";
 import SignaturePreview from "./components/SignaturePreview";
 import SignatureStylePanel from "./components/SignatureStylePanel";
 import {
   buildSignatureHtml,
   DEFAULT_ACCENT_COLOR,
-  DEMO_SIGNATURE_FIELDS,
+  DEFAULT_SIGNATURE_STATE,
   EMPTY_SIGNATURE_FIELDS,
   type SignatureFields,
+  type SignatureState,
   type SignatureTemplate,
 } from "./lib/signature";
 
 const STORAGE_KEY = "signia:state:v1";
 
-interface PersistedState {
-  fields: SignatureFields;
-  template: SignatureTemplate;
-  accentColor: string;
-}
-
-function loadPersistedState(): PersistedState | null {
+function loadPersistedState(): SignatureState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
@@ -35,11 +31,7 @@ function loadPersistedState(): PersistedState | null {
   }
 }
 
-const initialState: PersistedState = loadPersistedState() ?? {
-  fields: DEMO_SIGNATURE_FIELDS,
-  template: "horizontal",
-  accentColor: DEFAULT_ACCENT_COLOR,
-};
+const initialState: SignatureState = loadPersistedState() ?? DEFAULT_SIGNATURE_STATE;
 
 export default function App() {
   const [fields, setFields] = useState<SignatureFields>(initialState.fields);
@@ -64,6 +56,12 @@ export default function App() {
     hasInteracted.current = true;
     setAccentColor(next);
   }
+  function applyState(next: SignatureState) {
+    hasInteracted.current = true;
+    setFields(next.fields);
+    setTemplate(next.template);
+    setAccentColor(next.accentColor);
+  }
 
   useEffect(() => {
     if (!hasInteracted.current) return;
@@ -86,7 +84,13 @@ export default function App() {
       <div className="flex min-h-0 flex-1">
         <aside className="flex w-[var(--panel-w)] shrink-0 flex-col border-r border-gray-200">
           <div className="flex-1 overflow-y-auto p-6">
-            <SignatureForm fields={fields} onFieldsChange={updateFields} />
+            <div className="pb-5">
+              <SignatureForm fields={fields} onFieldsChange={updateFields} />
+            </div>
+            <ImportExportSection
+              state={{ fields, template, accentColor }}
+              onImport={applyState}
+            />
           </div>
           <div
             className="mt-auto border-t border-gray-200 px-6 text-center text-sm text-gray-500"
@@ -105,7 +109,11 @@ export default function App() {
         </aside>
 
         <main className="flex min-w-0 flex-1 flex-col items-center justify-center overflow-y-auto bg-gray-50 p-6">
-          <SignaturePreview html={html} onReset={() => updateFields(EMPTY_SIGNATURE_FIELDS)} />
+          <SignaturePreview
+            html={html}
+            onReset={() => updateFields(EMPTY_SIGNATURE_FIELDS)}
+            onResetToDefault={() => applyState(DEFAULT_SIGNATURE_STATE)}
+          />
         </main>
 
         <aside className="flex w-[var(--panel-w)] shrink-0 flex-col border-l border-gray-200">

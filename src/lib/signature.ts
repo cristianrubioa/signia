@@ -67,7 +67,7 @@ export const DEMO_SIGNATURE_FIELDS: SignatureFields = {
 };
 
 export const FONT_FAMILY_OPTIONS: { value: string; label: string }[] = [
-  { value: FONT_STACK, label: "Arial (default)" },
+  { value: FONT_STACK, label: "Arial" },
   { value: "Georgia, 'Times New Roman', serif", label: "Georgia" },
   { value: "'Times New Roman', Times, serif", label: "Times New Roman" },
   { value: "Verdana, Geneva, sans-serif", label: "Verdana" },
@@ -99,6 +99,18 @@ export const SIGNATURE_TEMPLATES: { value: SignatureTemplate; label: string }[] 
 
 export const ACCENT_COLOR_SWATCHES = ["#0d9488", "#2563eb", "#dc2626", "#6b7280", "#c026d3", "#d97706"];
 export const DEFAULT_ACCENT_COLOR = ACCENT_COLOR_SWATCHES[0];
+
+export interface SignatureState {
+  fields: SignatureFields;
+  template: SignatureTemplate;
+  accentColor: string;
+}
+
+export const DEFAULT_SIGNATURE_STATE: SignatureState = {
+  fields: DEMO_SIGNATURE_FIELDS,
+  template: "horizontal",
+  accentColor: DEFAULT_ACCENT_COLOR,
+};
 
 const MUTED = "#555555";
 const INK = "#111111";

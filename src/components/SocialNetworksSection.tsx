@@ -44,9 +44,9 @@ function Field({
             type="button"
             onClick={onRemove}
             aria-label={`Remove ${label}`}
-            className="text-gray-400 transition-colors hover:text-red-500"
+            className="text-gray-500 transition-colors hover:text-red-500"
           >
-            <i className="fa-solid fa-xmark text-xs" />
+            <i className="fa-solid fa-xmark text-sm" />
           </button>
         )}
       </div>

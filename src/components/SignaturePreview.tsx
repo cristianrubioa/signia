@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 interface Props {
   html: string;
   onReset: () => void;
+  onResetToDefault: () => void;
 }
 
 type CopyStatus = "idle" | "copied-rich" | "copied-html" | "error";
@@ -24,7 +25,7 @@ function previewDocument(html: string): string {
   return `<!doctype html><html><head><style>html,body{margin:0;height:100%;overflow:hidden;}</style></head><body style="padding:64px 20px 24px;font-family:Arial,Helvetica,sans-serif;">${html}</body></html>`;
 }
 
-export default function SignaturePreview({ html, onReset }: Props) {
+export default function SignaturePreview({ html, onReset, onResetToDefault }: Props) {
   const [status, setStatus] = useState<CopyStatus>("idle");
 
   useEffect(() => {
@@ -63,12 +64,13 @@ export default function SignaturePreview({ html, onReset }: Props) {
         <div className="border-b border-gray-200 px-4 py-3 text-sm text-gray-500">
           <p>
             <span className="font-semibold text-gray-700">To:</span>{" "}
-            <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-xs font-medium text-teal-700">
+            <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-700">
               Your Recipient
             </span>
           </p>
-          <p className="mt-1">
-            <span className="font-semibold text-gray-700">Subject:</span> Check out my new Email Signature
+          <p className="mt-2">
+            <span className="font-semibold text-gray-700">Subject:</span>{" "}
+            <span className="font-semibold">Check out my new Email Signature</span>
           </p>
         </div>
         <div className="px-4 pt-4">
@@ -86,33 +88,45 @@ export default function SignaturePreview({ html, onReset }: Props) {
         )}
       </div>
 
-      <div className="flex gap-3">
-        <button
-          type="button"
-          onClick={onReset}
-          className="flex shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
-        >
-          <i className="fa-solid fa-eraser" />
-          Clear
-        </button>
-        <button
-          type="button"
-          onClick={handleCopySignature}
-          disabled={!html}
-          className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-teal-600 py-2 font-semibold text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <i className="fa-solid fa-copy" />
-          {status === "copied-rich" ? "Copied!" : "Copy signature"}
-        </button>
-        <button
-          type="button"
-          onClick={handleCopyHtml}
-          disabled={!html}
-          className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white py-2 font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <i className="fa-solid fa-code" />
-          {status === "copied-html" ? "Copied!" : "Copy HTML"}
-        </button>
+      <div className="flex flex-col gap-10">
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={handleCopySignature}
+            disabled={!html}
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-teal-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <i className="fa-solid fa-copy text-base" />
+            {status === "copied-rich" ? "Copied!" : "Copy signature"}
+          </button>
+          <button
+            type="button"
+            onClick={handleCopyHtml}
+            disabled={!html}
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <i className="fa-solid fa-code text-base" />
+            {status === "copied-html" ? "Copied!" : "Copy HTML"}
+          </button>
+        </div>
+        <div className="flex justify-center gap-3">
+          <button
+            type="button"
+            onClick={onReset}
+            className="flex w-28 shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            <i className="fa-solid fa-eraser text-base" />
+            Clear
+          </button>
+          <button
+            type="button"
+            onClick={onResetToDefault}
+            className="flex w-28 shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            <i className="fa-solid fa-rotate-left text-base" />
+            Reset
+          </button>
+        </div>
       </div>
 
       {status === "error" && (
