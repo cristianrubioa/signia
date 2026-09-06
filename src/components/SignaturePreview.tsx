@@ -19,7 +19,9 @@ function toPlainText(html: string): string {
 }
 
 function previewDocument(html: string): string {
-  return `<!doctype html><html><body style="margin:0;padding:40px 20px 20px;font-family:Arial,Helvetica,sans-serif;">${html}</body></html>`;
+  // ponytail: overflow:hidden clips instead of scrolling if a heavily-filled signature ever
+  // exceeds the iframe's fixed height, so the internal scrollbar can never appear.
+  return `<!doctype html><html><head><style>html,body{margin:0;height:100%;overflow:hidden;}</style></head><body style="padding:64px 20px 24px;font-family:Arial,Helvetica,sans-serif;">${html}</body></html>`;
 }
 
 export default function SignaturePreview({ html, onReset }: Props) {
@@ -72,10 +74,11 @@ export default function SignaturePreview({ html, onReset }: Props) {
         <div className="px-4 pt-4">
           <div className="h-2.5 w-3/4 rounded bg-gray-200" />
           <div className="mt-2 h-2.5 w-1/2 rounded bg-gray-200" />
+          <div className="mt-2 h-2.5 w-2/3 rounded bg-gray-200" />
         </div>
 
         {html ? (
-          <iframe title="Signature preview" srcDoc={previewDocument(html)} className="mt-8 h-80 w-full" />
+          <iframe title="Signature preview" srcDoc={previewDocument(html)} className="mt-10 h-80 w-full" />
         ) : (
           <div className="mt-8 flex h-80 items-center justify-center text-sm text-gray-400">
             Enter your name to see a preview
