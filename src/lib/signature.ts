@@ -62,8 +62,6 @@ export const DEMO_SIGNATURE_FIELDS: SignatureFields = {
   address: "1 Memorial Dr, Cambridge, MA",
   website: "acme.com",
   linkedinUrl: "linkedin.com/in/ada",
-  additionalLinkLabel: "Portfolio",
-  additionalLinkUrl: "ada.dev",
   avatarUrl:
     "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Ada_Lovelace_daguerreotype_by_Antoine_Claudet_1843_-_cropped.png/250px-Ada_Lovelace_daguerreotype_by_Antoine_Claudet_1843_-_cropped.png",
 };
