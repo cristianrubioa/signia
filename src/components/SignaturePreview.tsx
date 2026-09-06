@@ -69,10 +69,15 @@ export default function SignaturePreview({ html, onReset }: Props) {
             <span className="font-semibold text-gray-700">Subject:</span> Check out my new Email Signature
           </p>
         </div>
+        <div className="px-4 pt-4">
+          <div className="h-2.5 w-3/4 rounded bg-gray-200" />
+          <div className="mt-2 h-2.5 w-1/2 rounded bg-gray-200" />
+        </div>
+
         {html ? (
-          <iframe title="Signature preview" srcDoc={previewDocument(html)} className="h-80 w-full" />
+          <iframe title="Signature preview" srcDoc={previewDocument(html)} className="mt-8 h-80 w-full" />
         ) : (
-          <div className="flex h-80 items-center justify-center text-sm text-gray-400">
+          <div className="mt-8 flex h-80 items-center justify-center text-sm text-gray-400">
             Enter your name to see a preview
           </div>
         )}
@@ -84,8 +89,8 @@ export default function SignaturePreview({ html, onReset }: Props) {
           onClick={onReset}
           className="flex shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
         >
-          <i className="fa-solid fa-arrow-rotate-right" />
-          Reset
+          <i className="fa-solid fa-eraser" />
+          Clear
         </button>
         <button
           type="button"
