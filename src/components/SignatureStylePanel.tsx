@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from "react";
 import {
   ACCENT_COLOR_SWATCHES,
   FONT_FAMILY_OPTIONS,
+  FONT_SIZE_OPTIONS,
   SIGNATURE_TEMPLATES,
   type SignatureFields,
   type SignatureTemplate,
@@ -19,6 +21,67 @@ interface Props {
 const INPUT_CLASS =
   "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 bg-white";
 const LABEL_CLASS = "block text-sm font-medium text-gray-700 mb-1.5";
+const SECTION_CLASS = "-mx-6 border-t border-gray-200 px-6";
+const SECTION_STYLE = { paddingTop: "var(--footer-padding-y, 0.75rem)" };
+
+function Dropdown({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  const selected = options.find((option) => option.value === value);
+
+  return (
+    <div>
+      <label className={LABEL_CLASS}>{label}</label>
+      <div className="relative" ref={menuRef}>
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className={`${INPUT_CLASS} flex items-center justify-between text-left`}
+        >
+          <span>{selected?.label}</span>
+          <i className={`fa-solid fa-chevron-down text-xs text-gray-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        </button>
+        {open && (
+          <div className="absolute z-10 mt-1.5 w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
+            {options.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => {
+                  onChange(option.value);
+                  setOpen(false);
+                }}
+                className="block w-full px-3 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function UrlField({
   label,
@@ -54,10 +117,12 @@ export default function SignatureStylePanel({
     onFieldsChange({ ...fields, [key]: value });
   }
 
+  const isCustomColorActive = !ACCENT_COLOR_SWATCHES.includes(accentColor);
+
   return (
-    <div className="flex flex-col gap-5">
-      <div>
-        <p className="crubio-section-label text-gray-500 mb-2">Template</p>
+    <div className="flex flex-col">
+      <div className="pb-5">
+        <p className="crubio-section-label text-teal-600 mb-2">Template</p>
         <div className="grid grid-cols-3 gap-[3px] bg-gray-100 rounded-lg p-[3px]">
           {SIGNATURE_TEMPLATES.map((t) => (
             <button
@@ -74,9 +139,9 @@ export default function SignatureStylePanel({
         </div>
       </div>
 
-      <div>
-        <p className="crubio-section-label text-gray-500 mb-2">Accent color</p>
-        <div className="flex items-center gap-2">
+      <div className={`${SECTION_CLASS} pb-5`} style={SECTION_STYLE}>
+        <p className="crubio-section-label text-teal-600 mb-2">Accent color</p>
+        <div className="flex flex-wrap items-center gap-1">
           {ACCENT_COLOR_SWATCHES.map((color) => (
             <button
               key={color}
@@ -84,12 +149,16 @@ export default function SignatureStylePanel({
               aria-label={`Use accent color ${color}`}
               onClick={() => onAccentColorChange(color)}
               style={{ backgroundColor: color }}
-              className={`h-7 w-7 rounded-full border-2 transition-transform hover:scale-110 ${
+              className={`h-[34px] w-[34px] rounded-full border-2 transition-transform hover:scale-110 ${
                 accentColor === color ? "border-gray-800" : "border-transparent"
               }`}
             />
           ))}
-          <span className="relative h-7 w-7 overflow-hidden rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center">
+          <span
+            className={`relative h-[34px] w-[34px] overflow-hidden rounded-full border-2 flex items-center justify-center ${
+              isCustomColorActive ? "border-solid border-gray-800" : "border-dashed border-gray-300"
+            }`}
+          >
             <i className="fa-solid fa-palette text-gray-400 text-sm pointer-events-none" />
             <input
               type="color"
@@ -102,23 +171,21 @@ export default function SignatureStylePanel({
         </div>
       </div>
 
-      <div>
-        <p className="crubio-section-label text-gray-500 mb-2">Font</p>
-        <select
-          value={fields.fontFamily}
-          onChange={(e) => update("fontFamily", e.target.value)}
-          className={INPUT_CLASS}
-        >
-          {FONT_FAMILY_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+      <div className={`${SECTION_CLASS} pb-5`} style={SECTION_STYLE}>
+        <p className="crubio-section-label text-teal-600 mb-2">Font</p>
+        <div className="flex flex-col gap-3">
+          <Dropdown label="Family" value={fields.fontFamily} onChange={(v) => update("fontFamily", v)} options={FONT_FAMILY_OPTIONS} />
+          <Dropdown
+            label="Size"
+            value={fields.fontSize}
+            onChange={(v) => update("fontSize", v as SignatureFields["fontSize"])}
+            options={FONT_SIZE_OPTIONS}
+          />
+        </div>
       </div>
 
-      <div>
-        <p className="crubio-section-label text-gray-500 mb-2">Branding</p>
+      <div className={`${SECTION_CLASS} pb-5`} style={SECTION_STYLE}>
+        <p className="crubio-section-label text-teal-600 mb-2">Branding</p>
         <div className="flex flex-col gap-3">
           <UrlField
             label="Profile picture"

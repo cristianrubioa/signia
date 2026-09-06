@@ -93,7 +93,7 @@ export default function SocialNetworksSection({ fields, onFieldsChange }: Props)
 
   return (
     <div className="-mx-6 border-t border-gray-200 px-6" style={{ paddingTop: "var(--footer-padding-y, 0.75rem)" }}>
-      <p className="crubio-section-label text-gray-500 mb-2">Social networks</p>
+      <p className="crubio-section-label text-teal-600 mb-2">Social networks</p>
       <div className="flex flex-col gap-3">
         <Field label="Website" value={fields.website} onChange={(v) => update("website", v)} placeholder="acme.com" />
         <Field label="LinkedIn" value={fields.linkedinUrl} onChange={(v) => update("linkedinUrl", v)} placeholder="linkedin.com/in/ada" />
