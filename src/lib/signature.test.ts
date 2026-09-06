@@ -59,4 +59,60 @@ describe("buildSignatureHtml", () => {
     expect(html).toContain(">555-1234<");
     expect(html).toContain("https://acme.com");
   });
+
+  it("omits the avatar image when its URL is blank", () => {
+    const html = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "Ada" }, "horizontal", "#000000");
+    expect(html).not.toContain("<img");
+  });
+
+  it("renders the avatar image when its URL is set", () => {
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", avatarUrl: "acme.com/ada.jpg" },
+      "stacked",
+      "#000000"
+    );
+    expect(html).toContain('src="https://acme.com/ada.jpg"');
+  });
+
+  it("applies the selected font family in place of the default stack", () => {
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", fontFamily: "Georgia, 'Times New Roman', serif" },
+      "accent-bar",
+      "#000000"
+    );
+    expect(html).toContain("font-family:Georgia, 'Times New Roman', serif;");
+  });
+
+  it("omits every social icon when no social URLs are set", () => {
+    const html = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "Ada" }, "horizontal", "#000000");
+    expect(html).not.toContain("bootstrap-icons");
+    expect(html).not.toContain("data:image/svg+xml");
+  });
+
+  it("renders a brand icon only for social networks with a filled URL", () => {
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", linkedinUrl: "linkedin.com/in/ada", facebookUrl: "facebook.com/ada" },
+      "horizontal",
+      "#000000"
+    );
+    expect(html).toContain("bootstrap-icons@1.11.3/icons/linkedin.svg");
+    expect(html).toContain("bootstrap-icons@1.11.3/icons/facebook.svg");
+    expect(html).not.toContain("bootstrap-icons@1.11.3/icons/instagram.svg");
+  });
+
+  it("renders the address as plain text with no href", () => {
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", address: "1 Memorial Dr, Cambridge, MA" },
+      "horizontal",
+      "#000000"
+    );
+    expect(html).toContain("1 Memorial Dr, Cambridge, MA");
+    expect(html).not.toContain("<a href");
+  });
+
+  it("renders a generic icon (not a brand icon) for the website field", () => {
+    const html = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "Ada", website: "acme.com" }, "horizontal", "#000000");
+    expect(html).toContain("data:image/svg+xml");
+    expect(html).toContain("https://acme.com");
+  });
 });

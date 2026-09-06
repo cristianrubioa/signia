@@ -4,11 +4,20 @@ export interface SignatureFields {
   company: string;
   phone: string;
   email: string;
+  address: string;
   website: string;
   linkedinUrl: string;
   additionalLinkLabel: string;
   additionalLinkUrl: string;
+  avatarUrl: string;
+  fontFamily: string;
+  facebookUrl: string;
+  instagramUrl: string;
+  xUrl: string;
+  youtubeUrl: string;
 }
+
+export const FONT_STACK = "Arial, Helvetica, sans-serif";
 
 export const EMPTY_SIGNATURE_FIELDS: SignatureFields = {
   name: "",
@@ -16,11 +25,57 @@ export const EMPTY_SIGNATURE_FIELDS: SignatureFields = {
   company: "",
   phone: "",
   email: "",
+  address: "",
   website: "",
   linkedinUrl: "",
   additionalLinkLabel: "",
   additionalLinkUrl: "",
+  avatarUrl: "",
+  fontFamily: FONT_STACK,
+  facebookUrl: "",
+  instagramUrl: "",
+  xUrl: "",
+  youtubeUrl: "",
 };
+
+export const DEMO_SIGNATURE_FIELDS: SignatureFields = {
+  ...EMPTY_SIGNATURE_FIELDS,
+  name: "Ada Lovelace",
+  title: "Software Engineer",
+  company: "Acme Inc.",
+  phone: "+1 555 123 4567",
+  email: "ada@acme.com",
+  address: "1 Memorial Dr, Cambridge, MA",
+  website: "acme.com",
+  linkedinUrl: "linkedin.com/in/ada",
+  additionalLinkLabel: "Portfolio",
+  additionalLinkUrl: "ada.dev",
+  avatarUrl:
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Ada_Lovelace_daguerreotype_by_Antoine_Claudet_1843_-_cropped.png/250px-Ada_Lovelace_daguerreotype_by_Antoine_Claudet_1843_-_cropped.png",
+};
+
+export const FONT_FAMILY_OPTIONS: { value: string; label: string }[] = [
+  { value: FONT_STACK, label: "Arial (default)" },
+  { value: "Georgia, 'Times New Roman', serif", label: "Georgia" },
+  { value: "'Times New Roman', Times, serif", label: "Times New Roman" },
+  { value: "Verdana, Geneva, sans-serif", label: "Verdana" },
+  { value: "'Trebuchet MS', Helvetica, sans-serif", label: "Trebuchet MS" },
+  { value: "'Courier New', Courier, monospace", label: "Courier" },
+];
+
+const SOCIAL_ICON_BASE = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons";
+
+const SOCIAL_ICON_URLS: Record<string, string> = {
+  linkedin: `${SOCIAL_ICON_BASE}/linkedin.svg`,
+  facebook: `${SOCIAL_ICON_BASE}/facebook.svg`,
+  instagram: `${SOCIAL_ICON_BASE}/instagram.svg`,
+  x: `${SOCIAL_ICON_BASE}/twitter-x.svg`,
+  youtube: `${SOCIAL_ICON_BASE}/youtube.svg`,
+};
+
+const WEBSITE_ICON_SVG =
+  "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555555' stroke-width='1.5'><circle cx='12' cy='12' r='9'/><path d='M3 12h18M12 3c2.5 2.5 4 6 4 9s-1.5 6-4 9c-2.5-3-4-6-4-9s1.5-6.5 4-9z'/></svg>";
+const WEBSITE_ICON_URL = `data:image/svg+xml,${WEBSITE_ICON_SVG}`;
 
 export type SignatureTemplate = "horizontal" | "stacked" | "accent-bar";
 
@@ -33,7 +88,6 @@ export const SIGNATURE_TEMPLATES: { value: SignatureTemplate; label: string }[] 
 export const ACCENT_COLOR_SWATCHES = ["#0d9488", "#dc2626", "#4f46e5", "#d97706"];
 export const DEFAULT_ACCENT_COLOR = ACCENT_COLOR_SWATCHES[0];
 
-const FONT_STACK = "Arial, Helvetica, sans-serif";
 const MUTED = "#555555";
 const INK = "#111111";
 
@@ -54,23 +108,53 @@ interface SignatureLink {
   href?: string;
 }
 
-function buildLinks(fields: SignatureFields): SignatureLink[] {
+interface SocialIconLink {
+  href: string;
+  iconUrl: string;
+  label: string;
+}
+
+function buildContactLinks(fields: SignatureFields): SignatureLink[] {
   const links: SignatureLink[] = [];
   if (fields.phone.trim())
     links.push({ text: fields.phone.trim(), href: `tel:${fields.phone.trim().replace(/[^\d+]/g, "")}` });
   if (fields.email.trim()) links.push({ text: fields.email.trim(), href: `mailto:${fields.email.trim()}` });
-  if (fields.website.trim()) links.push({ text: fields.website.trim(), href: withProtocol(fields.website.trim()) });
-  if (fields.linkedinUrl.trim()) links.push({ text: "LinkedIn", href: withProtocol(fields.linkedinUrl.trim()) });
+  if (fields.address.trim()) links.push({ text: fields.address.trim() });
   if (fields.additionalLinkLabel.trim() && fields.additionalLinkUrl.trim()) {
     links.push({ text: fields.additionalLinkLabel.trim(), href: withProtocol(fields.additionalLinkUrl.trim()) });
   }
   return links;
 }
 
+function buildSocialIcons(fields: SignatureFields): SocialIconLink[] {
+  const icons: SocialIconLink[] = [];
+  const add = (url: string, iconUrl: string, label: string) => {
+    if (url.trim()) icons.push({ href: withProtocol(url.trim()), iconUrl, label });
+  };
+  add(fields.website, WEBSITE_ICON_URL, "Website");
+  add(fields.linkedinUrl, SOCIAL_ICON_URLS.linkedin, "LinkedIn");
+  add(fields.facebookUrl, SOCIAL_ICON_URLS.facebook, "Facebook");
+  add(fields.instagramUrl, SOCIAL_ICON_URLS.instagram, "Instagram");
+  add(fields.xUrl, SOCIAL_ICON_URLS.x, "X");
+  add(fields.youtubeUrl, SOCIAL_ICON_URLS.youtube, "YouTube");
+  return icons;
+}
+
 function linkHtml(link: SignatureLink, color: string): string {
   const text = escapeHtml(link.text);
   if (!link.href) return text;
   return `<a href="${escapeHtml(link.href)}" style="color:${color};text-decoration:none;">${text}</a>`;
+}
+
+function socialIconsHtml(icons: SocialIconLink[]): string {
+  if (!icons.length) return "";
+  const items = icons
+    .map(
+      (icon) =>
+        `<a href="${escapeHtml(icon.href)}" style="text-decoration:none;margin-right:8px;"><img src="${icon.iconUrl}" width="16" height="16" alt="${escapeHtml(icon.label)}" style="border:0;vertical-align:middle;" /></a>`
+    )
+    .join("");
+  return `<div style="margin-top:6px;">${items}</div>`;
 }
 
 function titleLine(fields: SignatureFields): string {
@@ -81,29 +165,41 @@ function cell(content: string, style: string): string {
   return `<td style="${style}">${content}</td>`;
 }
 
-function table(rows: string, style = ""): string {
-  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:${FONT_STACK};${style}"><tbody>${rows}</tbody></table>`;
+function table(rows: string, fontFamily: string, style = ""): string {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:${fontFamily};${style}"><tbody>${rows}</tbody></table>`;
 }
 
-function horizontalTemplate(fields: SignatureFields, links: SignatureLink[], accentColor: string): string {
+function avatarCell(fields: SignatureFields, leftPadding = 0): string {
+  if (!fields.avatarUrl.trim()) return "";
+  const img = `<img src="${escapeHtml(withProtocol(fields.avatarUrl.trim()))}" width="64" height="64" alt="${escapeHtml(fields.name.trim())}" style="border-radius:50%;display:block;" />`;
+  return cell(img, `padding:0 16px 0 ${leftPadding}px;vertical-align:top;`);
+}
+
+function horizontalTemplate(fields: SignatureFields, links: SignatureLink[], icons: SocialIconLink[], accentColor: string): string {
   const nameBlock = [
     `<div style="font-size:16px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`,
     titleLine(fields) ? `<div style="font-size:13px;color:${MUTED};margin-top:2px;">${titleLine(fields)}</div>` : "",
   ].join("");
 
-  const contactBlock = links.map((link) => `<div style="font-size:13px;color:${MUTED};margin-top:2px;">${linkHtml(link, accentColor)}</div>`).join("");
+  const contactBlock =
+    links.map((link) => `<div style="font-size:13px;color:${MUTED};margin-top:2px;">${linkHtml(link, accentColor)}</div>`).join("") +
+    socialIconsHtml(icons);
 
-  const dividerCell = links.length
+  const dividerCell = links.length || icons.length
     ? cell("", `border-left:1px solid #dddddd;padding:0;width:1px;`)
     : "";
 
   return table(
-    `<tr>${cell(nameBlock, "padding:0 16px 0 0;vertical-align:top;")}${dividerCell}${cell(contactBlock, "padding:0 0 0 16px;vertical-align:top;")}</tr>`
+    `<tr>${avatarCell(fields)}${cell(nameBlock, "padding:0 16px 0 0;vertical-align:top;")}${dividerCell}${cell(contactBlock, "padding:0 0 0 16px;vertical-align:top;")}</tr>`,
+    fields.fontFamily
   );
 }
 
-function stackedTemplate(fields: SignatureFields, links: SignatureLink[], accentColor: string): string {
+function stackedTemplate(fields: SignatureFields, links: SignatureLink[], icons: SocialIconLink[], accentColor: string): string {
   const rows = [
+    fields.avatarUrl.trim()
+      ? `<tr>${cell(`<img src="${escapeHtml(withProtocol(fields.avatarUrl.trim()))}" width="64" height="64" alt="${escapeHtml(fields.name.trim())}" style="border-radius:50%;display:block;" />`, "padding:0 0 8px 0;")}</tr>`
+      : "",
     `<tr>${cell(`<div style="font-size:16px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`, "padding:0;")}</tr>`,
     titleLine(fields)
       ? `<tr>${cell(`<div style="font-size:13px;color:${MUTED};padding-top:2px;">${titleLine(fields)}</div>`, "padding:0;")}</tr>`
@@ -111,38 +207,43 @@ function stackedTemplate(fields: SignatureFields, links: SignatureLink[], accent
     ...links.map(
       (link) => `<tr>${cell(`<div style="font-size:13px;color:${MUTED};padding-top:2px;">${linkHtml(link, accentColor)}</div>`, "padding:0;")}</tr>`
     ),
+    icons.length ? `<tr>${cell(socialIconsHtml(icons), "padding:0;")}</tr>` : "",
   ].join("");
 
-  return table(rows);
+  return table(rows, fields.fontFamily);
 }
 
-function accentBarTemplate(fields: SignatureFields, links: SignatureLink[], accentColor: string): string {
+function accentBarTemplate(fields: SignatureFields, links: SignatureLink[], icons: SocialIconLink[], accentColor: string): string {
   const nameBlock = [
     `<div style="font-size:16px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`,
     titleLine(fields) ? `<div style="font-size:13px;color:${MUTED};margin-top:2px;">${titleLine(fields)}</div>` : "",
   ].join("");
 
-  const contactBlock = links.map((link) => `<div style="font-size:13px;color:${MUTED};margin-top:2px;">${linkHtml(link, accentColor)}</div>`).join("");
+  const contactBlock =
+    links.map((link) => `<div style="font-size:13px;color:${MUTED};margin-top:2px;">${linkHtml(link, accentColor)}</div>`).join("") +
+    socialIconsHtml(icons);
 
   const barCell = cell("", `background-color:${accentColor};padding:0;width:4px;`);
 
   return table(
-    `<tr>${barCell}${cell(nameBlock, "padding:0 16px;vertical-align:top;")}${cell(contactBlock, "padding:0;vertical-align:top;")}</tr>`
+    `<tr>${barCell}${avatarCell(fields, 16)}${cell(nameBlock, "padding:0 16px;vertical-align:top;")}${cell(contactBlock, "padding:0;vertical-align:top;")}</tr>`,
+    fields.fontFamily
   );
 }
 
 export function buildSignatureHtml(fields: SignatureFields, template: SignatureTemplate, accentColor: string): string {
   if (!fields.name.trim()) return "";
 
-  const links = buildLinks(fields);
+  const links = buildContactLinks(fields);
+  const icons = buildSocialIcons(fields);
 
   switch (template) {
     case "stacked":
-      return stackedTemplate(fields, links, accentColor);
+      return stackedTemplate(fields, links, icons, accentColor);
     case "accent-bar":
-      return accentBarTemplate(fields, links, accentColor);
+      return accentBarTemplate(fields, links, icons, accentColor);
     case "horizontal":
     default:
-      return horizontalTemplate(fields, links, accentColor);
+      return horizontalTemplate(fields, links, icons, accentColor);
   }
 }
