@@ -76,6 +76,16 @@ export default function App() {
   const previewRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
   const [maxZoom, setMaxZoom] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") setSidebarOpen(false);
+    }
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [sidebarOpen]);
 
   useEffect(() => {
     const mainEl = mainRef.current;
@@ -103,6 +113,16 @@ export default function App() {
   return (
     <div className="flex h-screen flex-col bg-white">
       <header className="flex h-[var(--header-h)] shrink-0 items-center gap-3 border-b border-gray-200 px-6">
+        <button
+          type="button"
+          onClick={() => setSidebarOpen((o) => !o)}
+          aria-label="Toggle menu"
+          aria-expanded={sidebarOpen}
+          aria-controls="signature-form-sidebar"
+          className="-ml-2 p-2 text-gray-600 md:hidden"
+        >
+          <i className="fa-solid fa-bars" />
+        </button>
         <i className="fa-solid fa-signature text-2xl text-teal-600" />
         <span className="font-semibold leading-none tracking-wide text-[length:var(--app-name-size)]">Signia</span>
         <span className="text-sm font-normal text-gray-500">Email Signature Generator</span>
@@ -111,8 +131,21 @@ export default function App() {
         </a>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        <aside className="flex w-[var(--panel-w)] shrink-0 flex-col border-r border-gray-200">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:pl-[var(--panel-w)] xl:flex-row xl:overflow-visible">
+        {sidebarOpen && (
+          <div
+            className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-30 bg-black/50 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        <aside
+          id="signature-form-sidebar"
+          className={`fixed bottom-0 left-0 top-[var(--header-h)] z-40 flex w-[var(--panel-w)] shrink-0 flex-col border-r border-gray-200 bg-white transition-transform duration-200 ease-out md:translate-x-0 md:transition-none ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
           <div className="flex-1 overflow-y-auto p-6">
             <div className="pb-5">
               <SignatureForm fields={fields} onFieldsChange={updateFields} />
@@ -140,7 +173,7 @@ export default function App() {
 
         <main
           ref={mainRef}
-          className="relative flex min-w-0 flex-1 flex-col items-center justify-center overflow-y-auto bg-gray-50 p-6"
+          className="relative flex min-w-0 flex-col items-center justify-center overflow-visible bg-gray-50 p-4 md:p-6 xl:flex-1 xl:overflow-y-auto"
         >
           <SignaturePreview
             html={html}
@@ -160,7 +193,7 @@ export default function App() {
                 step={0.01}
                 value={zoom}
                 onChange={(e) => setZoom(Number(e.target.value))}
-                className="w-32"
+                className="w-32 accent-teal-600"
                 aria-label="Zoom preview"
               />
               <i className="fa-solid fa-magnifying-glass-plus text-xs text-gray-400" />
@@ -169,8 +202,8 @@ export default function App() {
           )}
         </main>
 
-        <aside className="flex w-[var(--panel-w)] shrink-0 flex-col border-l border-gray-200">
-          <div className="flex-1 overflow-y-auto p-6">
+        <aside className="flex w-full shrink-0 flex-col border-t border-gray-200 xl:w-[var(--panel-w)] xl:border-l xl:border-t-0">
+          <div className="flex-1 overflow-visible p-6 xl:overflow-y-auto">
             <SignatureStylePanel
               fields={fields}
               onFieldsChange={updateFields}

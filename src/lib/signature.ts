@@ -89,12 +89,15 @@ const WEBSITE_ICON_SVG =
   "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555555' stroke-width='1.5'><circle cx='12' cy='12' r='9'/><path d='M3 12h18M12 3c2.5 2.5 4 6 4 9s-1.5 6-4 9c-2.5-3-4-6-4-9s1.5-6.5 4-9z'/></svg>";
 const WEBSITE_ICON_URL = `data:image/svg+xml,${WEBSITE_ICON_SVG}`;
 
-export type SignatureTemplate = "horizontal" | "stacked" | "accent-bar";
+export type SignatureTemplate = "horizontal" | "stacked" | "accent-bar" | "card" | "banner" | "centered";
 
 export const SIGNATURE_TEMPLATES: { value: SignatureTemplate; label: string }[] = [
   { value: "horizontal", label: "Horizontal" },
   { value: "stacked", label: "Stacked" },
   { value: "accent-bar", label: "Accent bar" },
+  { value: "card", label: "Card" },
+  { value: "banner", label: "Banner" },
+  { value: "centered", label: "Centered" },
 ];
 
 export const ACCENT_COLOR_SWATCHES = ["#0d9488", "#2563eb", "#dc2626", "#6b7280", "#c026d3", "#d97706", "#000000"];
@@ -258,6 +261,85 @@ function accentBarTemplate(fields: SignatureFields, links: SignatureLink[], icon
   );
 }
 
+function cardTemplate(fields: SignatureFields, links: SignatureLink[], icons: SocialIconLink[], accentColor: string): string {
+  const size = SIZE_SCALE[fields.fontSize];
+  const nameBlock = [
+    `<div style="font-size:${size.name}px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`,
+    titleLine(fields) ? `<div style="font-size:${size.sub}px;color:${MUTED};margin-top:2px;">${titleLine(fields)}</div>` : "",
+  ].join("");
+
+  const contactBlock =
+    links.map((link) => `<div style="font-size:${size.sub}px;color:${MUTED};margin-top:2px;">${linkHtml(link, accentColor)}</div>`).join("") +
+    socialIconsHtml(icons);
+
+  const dividerCell = links.length || icons.length
+    ? cell("", `border-left:1px solid #dddddd;padding:0;width:1px;`)
+    : "";
+
+  const innerTable = table(
+    `<tr>${avatarCell(fields)}${cell(nameBlock, "padding:0 16px 0 0;vertical-align:top;")}${dividerCell}${cell(contactBlock, "padding:0 0 0 16px;vertical-align:top;")}</tr>`,
+    fields.fontFamily
+  );
+
+  return table(`<tr>${cell(innerTable, `border:2px solid ${accentColor};border-radius:8px;padding:16px;`)}</tr>`, fields.fontFamily);
+}
+
+function centeredTemplate(fields: SignatureFields, links: SignatureLink[], icons: SocialIconLink[], accentColor: string): string {
+  const size = SIZE_SCALE[fields.fontSize];
+  const hasContact = links.length > 0 || icons.length > 0;
+
+  const rows = [
+    fields.avatarUrl.trim()
+      ? `<tr>${cell(
+          `<img src="${escapeHtml(withProtocol(fields.avatarUrl.trim()))}" width="64" height="64" alt="${escapeHtml(fields.name.trim())}" style="border-radius:50%;display:block;margin:0 auto;" />`,
+          "padding:0 0 10px 0;text-align:center;"
+        )}</tr>`
+      : "",
+    `<tr>${cell(`<div style="font-size:${size.name}px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`, "padding:0;text-align:center;")}</tr>`,
+    titleLine(fields)
+      ? `<tr>${cell(`<div style="font-size:${size.sub}px;color:${MUTED};padding-top:2px;">${titleLine(fields)}</div>`, "padding:0;text-align:center;")}</tr>`
+      : "",
+    hasContact
+      ? `<tr>${cell(`<div style="width:32px;height:2px;background-color:${accentColor};margin:10px auto;"></div>`, "padding:0;text-align:center;")}</tr>`
+      : "",
+    ...links.map(
+      (link) =>
+        `<tr>${cell(`<div style="font-size:${size.sub}px;color:${MUTED};padding-top:2px;">${linkHtml(link, accentColor)}</div>`, "padding:0;text-align:center;")}</tr>`
+    ),
+    icons.length ? `<tr>${cell(socialIconsHtml(icons), "padding:6px 0 0 0;text-align:center;")}</tr>` : "",
+  ].join("");
+
+  return table(rows, fields.fontFamily);
+}
+
+function bannerTemplate(fields: SignatureFields, links: SignatureLink[], icons: SocialIconLink[], accentColor: string): string {
+  const size = SIZE_SCALE[fields.fontSize];
+  const nameBlock = [
+    `<div style="font-size:${size.name}px;font-weight:bold;color:#ffffff;">${escapeHtml(fields.name.trim())}</div>`,
+    titleLine(fields) ? `<div style="font-size:${size.sub}px;color:#ffffff;opacity:0.9;margin-top:2px;">${titleLine(fields)}</div>` : "",
+  ].join("");
+
+  const contactBlock =
+    links.map((link) => `<div style="font-size:${size.sub}px;color:${MUTED};margin-top:2px;">${linkHtml(link, accentColor)}</div>`).join("") +
+    socialIconsHtml(icons);
+
+  const avatarImg = fields.avatarUrl.trim()
+    ? `<img src="${escapeHtml(withProtocol(fields.avatarUrl.trim()))}" width="48" height="48" alt="${escapeHtml(fields.name.trim())}" style="border-radius:50%;display:block;border:2px solid #ffffff;" />`
+    : "";
+
+  const bannerCells = avatarImg
+    ? `${cell(avatarImg, `background-color:${accentColor};padding:14px 8px 14px 16px;vertical-align:middle;`)}${cell(
+        nameBlock,
+        `background-color:${accentColor};padding:14px 16px 14px 8px;vertical-align:middle;`
+      )}`
+    : cell(nameBlock, `background-color:${accentColor};padding:14px 16px;vertical-align:middle;`);
+
+  const bannerRow = `<tr>${bannerCells}</tr>`;
+  const contentRow = `<tr><td colspan="2" style="padding:16px;">${contactBlock}</td></tr>`;
+
+  return table(`${bannerRow}${contentRow}`, fields.fontFamily);
+}
+
 export function buildSignatureHtml(fields: SignatureFields, template: SignatureTemplate, accentColor: string): string {
   if (!fields.name.trim()) return "";
 
@@ -269,6 +351,12 @@ export function buildSignatureHtml(fields: SignatureFields, template: SignatureT
       return stackedTemplate(fields, links, icons, accentColor);
     case "accent-bar":
       return accentBarTemplate(fields, links, icons, accentColor);
+    case "card":
+      return cardTemplate(fields, links, icons, accentColor);
+    case "banner":
+      return bannerTemplate(fields, links, icons, accentColor);
+    case "centered":
+      return centeredTemplate(fields, links, icons, accentColor);
     case "horizontal":
     default:
       return horizontalTemplate(fields, links, icons, accentColor);

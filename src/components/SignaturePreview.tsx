@@ -56,7 +56,7 @@ export default function SignaturePreview({ html, onReset, onResetToDefault, meas
   }
 
   return (
-    <div ref={measureRef} className="mx-auto flex w-full max-w-3xl flex-col gap-8" style={style}>
+    <div ref={measureRef} className="mx-auto flex w-full max-w-sm flex-col gap-8 md:max-w-3xl" style={style}>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
         <div className="flex items-center gap-1.5 border-b border-gray-200 px-4 py-3.5">
           <span className="h-3 w-3 rounded-full bg-red-400" />

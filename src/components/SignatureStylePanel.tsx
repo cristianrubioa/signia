@@ -123,13 +123,13 @@ export default function SignatureStylePanel({
     <div className="flex flex-col">
       <div className="pb-5">
         <p className="crubio-section-label text-teal-600 mb-2">Template</p>
-        <div className="grid grid-cols-3 gap-[3px] bg-gray-100 rounded-lg p-[3px]">
+        <div className="grid grid-cols-2 gap-[3px] bg-gray-100 rounded-lg p-[3px]">
           {SIGNATURE_TEMPLATES.map((t) => (
             <button
               key={t.value}
               type="button"
               onClick={() => onTemplateChange(t.value)}
-              className={`text-sm font-medium py-1.5 rounded-md transition-colors ${
+              className={`text-sm font-medium py-3 rounded-md transition-colors ${
                 template === t.value ? "bg-white text-gray-800 shadow-sm" : "text-gray-500 hover:text-gray-700"
               }`}
             >
