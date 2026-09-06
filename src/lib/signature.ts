@@ -11,6 +11,7 @@ export interface SignatureFields {
   additionalLinkUrl: string;
   avatarUrl: string;
   fontFamily: string;
+  fontSize: SignatureFontSize;
   facebookUrl: string;
   instagramUrl: string;
   xUrl: string;
@@ -18,6 +19,18 @@ export interface SignatureFields {
 }
 
 export const FONT_STACK = "Arial, Helvetica, sans-serif";
+
+export type SignatureFontSize = "default" | "larger";
+
+export const FONT_SIZE_OPTIONS: { value: SignatureFontSize; label: string }[] = [
+  { value: "default", label: "Default" },
+  { value: "larger", label: "Larger" },
+];
+
+export const SIZE_SCALE: Record<SignatureFontSize, { name: number; sub: number }> = {
+  default: { name: 16, sub: 13 },
+  larger: { name: 18, sub: 15 },
+};
 
 export const EMPTY_SIGNATURE_FIELDS: SignatureFields = {
   name: "",
@@ -32,6 +45,7 @@ export const EMPTY_SIGNATURE_FIELDS: SignatureFields = {
   additionalLinkUrl: "",
   avatarUrl: "",
   fontFamily: FONT_STACK,
+  fontSize: "default",
   facebookUrl: "",
   instagramUrl: "",
   xUrl: "",
@@ -176,13 +190,14 @@ function avatarCell(fields: SignatureFields, leftPadding = 0): string {
 }
 
 function horizontalTemplate(fields: SignatureFields, links: SignatureLink[], icons: SocialIconLink[], accentColor: string): string {
+  const size = SIZE_SCALE[fields.fontSize];
   const nameBlock = [
-    `<div style="font-size:16px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`,
-    titleLine(fields) ? `<div style="font-size:13px;color:${MUTED};margin-top:2px;">${titleLine(fields)}</div>` : "",
+    `<div style="font-size:${size.name}px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`,
+    titleLine(fields) ? `<div style="font-size:${size.sub}px;color:${MUTED};margin-top:2px;">${titleLine(fields)}</div>` : "",
   ].join("");
 
   const contactBlock =
-    links.map((link) => `<div style="font-size:13px;color:${MUTED};margin-top:2px;">${linkHtml(link, accentColor)}</div>`).join("") +
+    links.map((link) => `<div style="font-size:${size.sub}px;color:${MUTED};margin-top:2px;">${linkHtml(link, accentColor)}</div>`).join("") +
     socialIconsHtml(icons);
 
   const dividerCell = links.length || icons.length
@@ -196,16 +211,17 @@ function horizontalTemplate(fields: SignatureFields, links: SignatureLink[], ico
 }
 
 function stackedTemplate(fields: SignatureFields, links: SignatureLink[], icons: SocialIconLink[], accentColor: string): string {
+  const size = SIZE_SCALE[fields.fontSize];
   const rows = [
     fields.avatarUrl.trim()
       ? `<tr>${cell(`<img src="${escapeHtml(withProtocol(fields.avatarUrl.trim()))}" width="64" height="64" alt="${escapeHtml(fields.name.trim())}" style="border-radius:50%;display:block;" />`, "padding:0 0 8px 0;")}</tr>`
       : "",
-    `<tr>${cell(`<div style="font-size:16px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`, "padding:0;")}</tr>`,
+    `<tr>${cell(`<div style="font-size:${size.name}px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`, "padding:0;")}</tr>`,
     titleLine(fields)
-      ? `<tr>${cell(`<div style="font-size:13px;color:${MUTED};padding-top:2px;">${titleLine(fields)}</div>`, "padding:0;")}</tr>`
+      ? `<tr>${cell(`<div style="font-size:${size.sub}px;color:${MUTED};padding-top:2px;">${titleLine(fields)}</div>`, "padding:0;")}</tr>`
       : "",
     ...links.map(
-      (link) => `<tr>${cell(`<div style="font-size:13px;color:${MUTED};padding-top:2px;">${linkHtml(link, accentColor)}</div>`, "padding:0;")}</tr>`
+      (link) => `<tr>${cell(`<div style="font-size:${size.sub}px;color:${MUTED};padding-top:2px;">${linkHtml(link, accentColor)}</div>`, "padding:0;")}</tr>`
     ),
     icons.length ? `<tr>${cell(socialIconsHtml(icons), "padding:0;")}</tr>` : "",
   ].join("");
@@ -214,19 +230,20 @@ function stackedTemplate(fields: SignatureFields, links: SignatureLink[], icons:
 }
 
 function accentBarTemplate(fields: SignatureFields, links: SignatureLink[], icons: SocialIconLink[], accentColor: string): string {
+  const size = SIZE_SCALE[fields.fontSize];
   const nameBlock = [
-    `<div style="font-size:16px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`,
-    titleLine(fields) ? `<div style="font-size:13px;color:${MUTED};margin-top:2px;">${titleLine(fields)}</div>` : "",
+    `<div style="font-size:${size.name}px;font-weight:bold;color:${INK};">${escapeHtml(fields.name.trim())}</div>`,
+    titleLine(fields) ? `<div style="font-size:${size.sub}px;color:${MUTED};margin-top:2px;">${titleLine(fields)}</div>` : "",
   ].join("");
 
   const contactBlock =
-    links.map((link) => `<div style="font-size:13px;color:${MUTED};margin-top:2px;">${linkHtml(link, accentColor)}</div>`).join("") +
+    links.map((link) => `<div style="font-size:${size.sub}px;color:${MUTED};margin-top:2px;">${linkHtml(link, accentColor)}</div>`).join("") +
     socialIconsHtml(icons);
 
   const barCell = cell("", `background-color:${accentColor};padding:0;width:4px;`);
 
   return table(
-    `<tr>${barCell}${avatarCell(fields, 16)}${cell(nameBlock, "padding:0 16px;vertical-align:top;")}${cell(contactBlock, "padding:0;vertical-align:top;")}</tr>`,
+    `<tr>${barCell}${avatarCell(fields, 16)}${cell(nameBlock, "padding:0 16px 0 0;vertical-align:top;")}${cell(contactBlock, "padding:0;vertical-align:top;")}</tr>`,
     fields.fontFamily
   );
 }

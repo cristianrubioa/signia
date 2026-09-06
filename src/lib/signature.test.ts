@@ -115,4 +115,32 @@ describe("buildSignatureHtml", () => {
     expect(html).toContain("data:image/svg+xml");
     expect(html).toContain("https://acme.com");
   });
+
+  it("defaults to the default font size when unset", () => {
+    const html = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "Ada", title: "Engineer" }, "horizontal", "#000000");
+    expect(html).toContain("font-size:16px");
+    expect(html).toContain("font-size:13px");
+  });
+
+  it("scales name and sub text together when the larger font size is selected", () => {
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", title: "Engineer", fontSize: "larger" },
+      "horizontal",
+      "#000000"
+    );
+    expect(html).toContain("font-size:18px");
+    expect(html).toContain("font-size:15px");
+    expect(html).not.toContain("font-size:16px");
+    expect(html).not.toContain("font-size:13px");
+  });
+
+  it("keeps the accent-bar avatar-to-name gap consistent with the horizontal template", () => {
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", avatarUrl: "acme.com/ada.jpg" },
+      "accent-bar",
+      "#000000"
+    );
+    expect(html).toContain('padding:0 16px 0 0;vertical-align:top;');
+    expect(html).not.toContain('padding:0 16px;vertical-align:top;');
+  });
 });
