@@ -5,15 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Signia — Email Signature Generator</title>
     <meta name="description" content="Generate a clean, email-safe HTML signature in under a minute." />
+    <link rel="canonical" href="https://signia.crubio.fyi/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preconnect" href="https://crubio.fyi" />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://crubio.fyi/crubio-ui/app/tokens.css" />
-    <!-- Font Awesome loaded non-blocking: icons hide behind the loading state anyway -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" /></noscript>
+    <!-- Non-blocking: tokens.css (which @imports the Google Fonts used) is fine to arrive after first paint -->
+    <link rel="stylesheet" href="https://crubio.fyi/crubio-ui/app/tokens.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://crubio.fyi/crubio-ui/app/tokens.css" /></noscript>
+    <!-- Solid-only Font Awesome subset: the app only ever renders fa-solid icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/solid.min.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/solid.min.css" /></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/fontawesome.min.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/fontawesome.min.css" /></noscript>
   </head>
   <body>
     <div id="root"></div>
