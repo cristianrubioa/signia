@@ -44,7 +44,7 @@ export default function SignatureForm({ fields, onFieldsChange }: Props) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <p className="crubio-section-label text-teal-600 mb-2">Details</p>
+        <p className="crubio-section-label text-teal-700 mb-2">Details</p>
         <div className="flex flex-col gap-3">
           <Field label="Full name" value={fields.name} onChange={(v) => update("name", v)} placeholder="Ada Lovelace" />
           <Field label="Job title" value={fields.title} onChange={(v) => update("title", v)} placeholder="Software Engineer" />

@@ -122,7 +122,7 @@ export default function SignatureStylePanel({
   return (
     <div className="flex flex-col">
       <div className="pb-5">
-        <p className="crubio-section-label text-teal-600 mb-2">Template</p>
+        <p className="crubio-section-label text-teal-700 mb-2">Template</p>
         <div className="grid grid-cols-2 gap-[3px] bg-gray-100 rounded-lg p-[3px]">
           {SIGNATURE_TEMPLATES.map((t) => (
             <button
@@ -130,7 +130,7 @@ export default function SignatureStylePanel({
               type="button"
               onClick={() => onTemplateChange(t.value)}
               className={`text-sm font-medium py-3 rounded-md transition-colors ${
-                template === t.value ? "bg-white text-gray-800 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                template === t.value ? "bg-white text-gray-800 shadow-sm" : "text-gray-600 hover:text-gray-700"
               }`}
             >
               {t.label}
@@ -140,7 +140,7 @@ export default function SignatureStylePanel({
       </div>
 
       <div className={`${SECTION_CLASS} pb-5`} style={SECTION_STYLE}>
-        <p className="crubio-section-label text-teal-600 mb-2">Accent color</p>
+        <p className="crubio-section-label text-teal-700 mb-2">Accent color</p>
         <div className="flex flex-wrap items-center gap-0.5">
           {ACCENT_COLOR_SWATCHES.map((color) => (
             <button
@@ -176,7 +176,7 @@ export default function SignatureStylePanel({
       </div>
 
       <div className={`${SECTION_CLASS} pb-5`} style={SECTION_STYLE}>
-        <p className="crubio-section-label text-teal-600 mb-2">Font</p>
+        <p className="crubio-section-label text-teal-700 mb-2">Font</p>
         <div className="flex flex-col gap-3">
           <Dropdown label="Family" value={fields.fontFamily} onChange={(v) => update("fontFamily", v)} options={FONT_FAMILY_OPTIONS} />
           <Dropdown
@@ -189,7 +189,7 @@ export default function SignatureStylePanel({
       </div>
 
       <div className={`${SECTION_CLASS} pb-5`} style={SECTION_STYLE}>
-        <p className="crubio-section-label text-teal-600 mb-2">Branding</p>
+        <p className="crubio-section-label text-teal-700 mb-2">Branding</p>
         <div className="flex flex-col gap-3">
           <UrlField
             label="Profile picture"

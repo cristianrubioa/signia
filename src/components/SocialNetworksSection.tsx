@@ -44,7 +44,7 @@ function Field({
             type="button"
             onClick={onRemove}
             aria-label={`Remove ${label}`}
-            className="text-gray-500 transition-colors hover:text-red-500"
+            className="text-gray-600 transition-colors hover:text-red-500"
           >
             <i className="fa-solid fa-xmark text-sm" />
           </button>
@@ -93,7 +93,7 @@ export default function SocialNetworksSection({ fields, onFieldsChange }: Props)
 
   return (
     <div className="-mx-6 border-t border-gray-200 px-6" style={{ paddingTop: "var(--footer-padding-y, 0.75rem)" }}>
-      <p className="crubio-section-label text-teal-600 mb-2">Social networks</p>
+      <p className="crubio-section-label text-teal-700 mb-2">Social networks</p>
       <div className="flex flex-col gap-3">
         <Field label="Website" value={fields.website} onChange={(v) => update("website", v)} placeholder="acme.com" />
         <Field label="LinkedIn" value={fields.linkedinUrl} onChange={(v) => update("linkedinUrl", v)} placeholder="linkedin.com/in/ada" />
@@ -132,7 +132,7 @@ export default function SocialNetworksSection({ fields, onFieldsChange }: Props)
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
-              className={`${INPUT_CLASS} flex items-center justify-between font-medium text-teal-600 transition-colors hover:bg-gray-50`}
+              className={`${INPUT_CLASS} flex items-center justify-between font-medium text-teal-700 transition-colors hover:bg-gray-50`}
             >
               <span className="flex items-center gap-2">
                 <i className="fa-solid fa-plus text-xs" />

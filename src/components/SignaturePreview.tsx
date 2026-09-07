@@ -63,7 +63,7 @@ export default function SignaturePreview({ html, onReset, onResetToDefault, meas
           <span className="h-3 w-3 rounded-full bg-amber-400" />
           <span className="h-3 w-3 rounded-full bg-green-500" />
         </div>
-        <div className="border-b border-gray-200 px-4 py-3 text-sm text-gray-500">
+        <div className="border-b border-gray-200 px-4 py-3 text-sm text-gray-600">
           <p>
             <span className="font-semibold text-gray-700">To:</span>{" "}
             <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-700">
@@ -96,7 +96,7 @@ export default function SignaturePreview({ html, onReset, onResetToDefault, meas
             type="button"
             onClick={handleCopySignature}
             disabled={!html}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-teal-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-teal-700 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <i className="fa-solid fa-copy text-base" />
             {status === "copied-rich" ? "Copied!" : "Copy signature"}

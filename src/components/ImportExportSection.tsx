@@ -51,7 +51,7 @@ export default function ImportExportSection({ state, onImport }: Props) {
 
   return (
     <div className="-mx-6 border-t border-gray-200 px-6" style={{ paddingTop: "var(--footer-padding-y, 0.75rem)" }}>
-      <p className="crubio-section-label text-teal-600 mb-2">Import/Export</p>
+      <p className="crubio-section-label text-teal-700 mb-2">Import/Export</p>
       <div className="flex gap-2">
         <button type="button" onClick={() => fileInputRef.current?.click()} className={BUTTON_CLASS}>
           <i className="fa-solid fa-upload" />

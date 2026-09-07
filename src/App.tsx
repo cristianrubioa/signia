@@ -131,9 +131,9 @@ export default function App() {
         >
           <i className="fa-solid fa-bars" />
         </button>
-        <i className="fa-solid fa-signature text-2xl text-teal-600" />
+        <i className="fa-solid fa-signature text-2xl text-teal-700" />
         <span className="font-semibold leading-none tracking-wide text-[length:var(--app-name-size)]">Signia</span>
-        <span className="text-sm font-normal text-gray-500">Email Signature Generator</span>
+        <span className="text-sm font-normal text-gray-600">Email Signature Generator</span>
         <a className="crubio-home-link" href="https://crubio.fyi">
           crubio.fyi
         </a>
@@ -164,7 +164,7 @@ export default function App() {
             />
           </div>
           <div
-            className="mt-auto border-t border-gray-200 px-6 text-center text-sm text-gray-500"
+            className="mt-auto border-t border-gray-200 px-6 text-center text-sm text-gray-600"
             style={{ paddingTop: "var(--footer-padding-y, 0.75rem)", paddingBottom: "var(--footer-padding-y, 0.75rem)" }}
           >
             Made with <span className="text-base text-red-400">♥</span> by{" "}
@@ -209,7 +209,7 @@ export default function App() {
                 aria-label="Zoom preview"
               />
               <i className="fa-solid fa-magnifying-glass-plus text-xs text-gray-400" />
-              <span className="w-10 text-right text-xs font-medium text-gray-500">{Math.round(zoom * 100)}%</span>
+              <span className="w-10 text-right text-xs font-medium text-gray-600">{Math.round(zoom * 100)}%</span>
             </div>
           )}
         </main>
