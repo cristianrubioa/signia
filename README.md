@@ -1,32 +1,33 @@
-# React + TypeScript + Vite
+# Signia
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 
-Currently, two official plugins are available:
+Generador de firmas de correo HTML, limpias y compatibles con clientes de email, en menos de un minuto. Todo corre en el navegador — sin backend, sin cuenta, sin tracking.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Correr local
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev      # http://localhost:5173
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Scripts
+
+| Comando           | Qué hace                              |
+| ------------------ | -------------------------------------- |
+| `npm run dev`       | Servidor de desarrollo (Vite)          |
+| `npm run build`     | Type-check + build de producción       |
+| `npm run preview`   | Sirve el build de producción localmente |
+| `npm run lint`      | Lint con oxlint                        |
+| `npm run test`      | Tests con Vitest (piso de 80% coverage) |
+
+## Stack
+
+React 19 + TypeScript + Vite + Tailwind 4. Sin backend: los datos de la firma se guardan en `localStorage` del navegador. Única dependencia de runtime más allá de React: `js-yaml`, para el import/export de configuración.
+
+## Deploy
+
+Vercel detecta el preset de Vite automáticamente — `npm run build` genera `dist/`, sin config extra. No hay rutas del lado del cliente (una sola página), así que tampoco hace falta un rewrite de SPA.
