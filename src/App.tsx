@@ -38,10 +38,8 @@ export default function App() {
   const [template, setTemplate] = useState<SignatureTemplate>(initialState.template);
   const [accentColor, setAccentColor] = useState(initialState.accentColor);
 
-  // Tracks whether the user (or Clear) has actually changed state, so the demo
-  // content shown on first visit is never itself written to localStorage —
-  // only real edits are. A ref-based "skip the first effect run" guard doesn't
-  // work here because React StrictMode double-invokes effects in dev.
+  // Guards demo content from being written to localStorage as if it were a real edit.
+  // Not a "skip first effect" ref: StrictMode double-invokes effects in dev.
   const hasInteracted = useRef(false);
 
   function updateFields(next: SignatureFields) {
@@ -87,10 +85,8 @@ export default function App() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [sidebarOpen]);
 
-  // Computes the zoom bar's reserved space and the zoom cap from the same measurement pass, so
-  // maxZoom is never derived from a stale bottom padding — a two-effect split previously let
-  // maxZoom race ahead of the padding that's supposed to bound it, letting the scaled card
-  // visually overlap the zoom bar.
+  // One measurement pass for both values: a two-effect split previously let maxZoom
+  // race ahead of the zoom bar's padding, letting the scaled card overlap the bar.
   useEffect(() => {
     const mainEl = mainRef.current;
     const previewEl = previewRef.current;
