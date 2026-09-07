@@ -5,9 +5,11 @@
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 
-Generador de firmas de correo HTML, limpias y compatibles con clientes de email, en menos de un minuto. Todo corre en el navegador — sin backend, sin cuenta, sin tracking.
+![Signia preview](public/preview.png)
 
-## Correr local
+HTML email signature generator — clean, client-safe, ready in under a minute. Runs entirely in the browser: no backend, no account, no tracking.
+
+## Run locally
 
 ```bash
 npm install
@@ -16,18 +18,18 @@ npm run dev      # http://localhost:5173
 
 ## Scripts
 
-| Comando           | Qué hace                              |
-| ------------------ | -------------------------------------- |
-| `npm run dev`       | Servidor de desarrollo (Vite)          |
-| `npm run build`     | Type-check + build de producción       |
-| `npm run preview`   | Sirve el build de producción localmente |
-| `npm run lint`      | Lint con oxlint                        |
-| `npm run test`      | Tests con Vitest (piso de 80% coverage) |
+| Command             | What it does                          |
+| ------------------- | -------------------------------------- |
+| `npm run dev`        | Development server (Vite)             |
+| `npm run build`      | Type-check + production build         |
+| `npm run preview`    | Serves the production build locally   |
+| `npm run lint`       | Lint with oxlint                      |
+| `npm run test`       | Tests with Vitest (80% coverage floor) |
 
 ## Stack
 
-React 19 + TypeScript + Vite + Tailwind 4. Sin backend: los datos de la firma se guardan en `localStorage` del navegador. Única dependencia de runtime más allá de React: `js-yaml`, para el import/export de configuración.
+React 19 + TypeScript + Vite + Tailwind 4. No backend: signature data is stored in the browser's `localStorage`. The only runtime dependency beyond React is `js-yaml`, used for config import/export.
 
 ## Deploy
 
-Vercel detecta el preset de Vite automáticamente — `npm run build` genera `dist/`, sin config extra. No hay rutas del lado del cliente (una sola página), así que tampoco hace falta un rewrite de SPA.
+Vercel auto-detects the Vite preset — `npm run build` outputs `dist/`, no extra config needed. There's no client-side routing (single page), so no SPA rewrite is required either.
