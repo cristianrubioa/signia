@@ -2,5 +2,5 @@
 
 Signia is a browser-only email signature generator: fill in a form, pick a template and accent color, and get a clean, email-safe HTML signature you can copy or download — no backend, no account, no tracking.
 
-- Source: https://github.com/cristianrubioa/signia
-- Live app: https://signia.crubio.fyi/
+- Source: [github.com/cristianrubioa/signia](https://github.com/cristianrubioa/signia)
+- Live app: [signia.crubio.fyi](https://signia.crubio.fyi/)
