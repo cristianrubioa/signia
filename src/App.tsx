@@ -70,13 +70,13 @@ export default function App() {
 
   const html = useMemo(() => buildSignatureHtml(fields, template, accentColor), [fields, template, accentColor]);
 
-  // ponytail: fixed 48px matches <main>'s p-6 padding on both axes; revisit if that padding changes.
-  const MAIN_PADDING_PX = 48;
   const mainRef = useRef<HTMLElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  const zoomBarRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
   const [maxZoom, setMaxZoom] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [zoomBarReserve, setZoomBarReserve] = useState<number | null>(null);
 
   useEffect(() => {
     if (!sidebarOpen) return;
@@ -87,14 +87,25 @@ export default function App() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [sidebarOpen]);
 
+  // Computes the zoom bar's reserved space and the zoom cap from the same measurement pass, so
+  // maxZoom is never derived from a stale bottom padding — a two-effect split previously let
+  // maxZoom race ahead of the padding that's supposed to bound it, letting the scaled card
+  // visually overlap the zoom bar.
   useEffect(() => {
     const mainEl = mainRef.current;
     const previewEl = previewRef.current;
     if (!mainEl || !previewEl) return;
 
-    function recalcMaxZoom() {
-      const availableWidth = mainEl!.clientWidth - MAIN_PADDING_PX;
-      const availableHeight = mainEl!.clientHeight - MAIN_PADDING_PX;
+    function recalc() {
+      const mainStyle = getComputedStyle(mainEl!);
+      const paddingTop = parseFloat(mainStyle.paddingTop);
+
+      const barRect = zoomBarRef.current?.getBoundingClientRect();
+      const reserve = barRect && barRect.height > 0 ? paddingTop + mainEl!.getBoundingClientRect().bottom - barRect.top : null;
+      setZoomBarReserve(reserve);
+
+      const availableWidth = mainEl!.clientWidth - parseFloat(mainStyle.paddingLeft) - parseFloat(mainStyle.paddingRight);
+      const availableHeight = mainEl!.clientHeight - paddingTop - (reserve ?? parseFloat(mainStyle.paddingBottom));
       const naturalWidth = previewEl!.offsetWidth;
       const naturalHeight = previewEl!.offsetHeight;
       if (naturalWidth === 0 || naturalHeight === 0) return;
@@ -103,12 +114,13 @@ export default function App() {
       setZoom((z) => Math.min(z, next));
     }
 
-    recalcMaxZoom();
-    const observer = new ResizeObserver(recalcMaxZoom);
+    recalc();
+    const observer = new ResizeObserver(recalc);
     observer.observe(mainEl);
     observer.observe(previewEl);
+    if (zoomBarRef.current) observer.observe(zoomBarRef.current);
     return () => observer.disconnect();
-  }, [html]);
+  }, [html, maxZoom > 1]);
 
   return (
     <div className="flex h-screen flex-col bg-white">
@@ -174,17 +186,21 @@ export default function App() {
         <main
           ref={mainRef}
           className="relative flex min-w-0 flex-col items-center justify-center overflow-visible bg-gray-50 p-4 md:p-6 xl:flex-1 xl:overflow-y-auto"
+          style={zoomBarReserve != null ? { paddingBottom: zoomBarReserve } : undefined}
         >
           <SignaturePreview
             html={html}
             onReset={() => updateFields(EMPTY_SIGNATURE_FIELDS)}
             onResetToDefault={() => applyState(DEFAULT_SIGNATURE_STATE)}
             measureRef={previewRef}
-            style={{ transform: `scale(${zoom})` }}
+            style={{ zoom }}
           />
 
           {maxZoom > 1 && (
-            <div className="absolute bottom-4 right-4 hidden items-center gap-3 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm md:flex">
+            <div
+              ref={zoomBarRef}
+              className="absolute bottom-4 right-4 hidden items-center gap-3 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm md:flex"
+            >
               <i className="fa-solid fa-magnifying-glass-minus text-xs text-gray-400" />
               <input
                 type="range"
