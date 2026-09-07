@@ -78,16 +78,13 @@ export const FONT_FAMILY_OPTIONS: { value: string; label: string }[] = [
 const SOCIAL_ICON_BASE = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons";
 
 const SOCIAL_ICON_URLS: Record<string, string> = {
+  website: `${SOCIAL_ICON_BASE}/globe.svg`,
   linkedin: `${SOCIAL_ICON_BASE}/linkedin.svg`,
   facebook: `${SOCIAL_ICON_BASE}/facebook.svg`,
   instagram: `${SOCIAL_ICON_BASE}/instagram.svg`,
   x: `${SOCIAL_ICON_BASE}/twitter-x.svg`,
   youtube: `${SOCIAL_ICON_BASE}/youtube.svg`,
 };
-
-const WEBSITE_ICON_SVG =
-  "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555555' stroke-width='1.5'><circle cx='12' cy='12' r='9'/><path d='M3 12h18M12 3c2.5 2.5 4 6 4 9s-1.5 6-4 9c-2.5-3-4-6-4-9s1.5-6.5 4-9z'/></svg>";
-const WEBSITE_ICON_URL = `data:image/svg+xml,${WEBSITE_ICON_SVG}`;
 
 export type SignatureTemplate = "horizontal" | "stacked" | "accent-bar" | "card" | "banner" | "centered";
 
@@ -158,7 +155,7 @@ function buildSocialIcons(fields: SignatureFields): SocialIconLink[] {
   const add = (url: string, iconUrl: string, label: string) => {
     if (url.trim()) icons.push({ href: withProtocol(url.trim()), iconUrl, label });
   };
-  add(fields.website, WEBSITE_ICON_URL, "Website");
+  add(fields.website, SOCIAL_ICON_URLS.website, "Website");
   add(fields.linkedinUrl, SOCIAL_ICON_URLS.linkedin, "LinkedIn");
   add(fields.facebookUrl, SOCIAL_ICON_URLS.facebook, "Facebook");
   add(fields.instagramUrl, SOCIAL_ICON_URLS.instagram, "Instagram");

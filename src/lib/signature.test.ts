@@ -112,7 +112,7 @@ describe("buildSignatureHtml", () => {
 
   it("renders a generic icon (not a brand icon) for the website field", () => {
     const html = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "Ada", website: "acme.com" }, "horizontal", "#000000");
-    expect(html).toContain("data:image/svg+xml");
+    expect(html).toContain("bootstrap-icons@1.11.3/icons/globe.svg");
     expect(html).toContain("https://acme.com");
   });
 
