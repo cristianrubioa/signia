@@ -12,6 +12,10 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- ponytail: tokens.css does @import of this same URL, which serializes the whole chain
+         behind a nested fetch since tokens.css is a blocking stylesheet. Preloading it lets the
+         browser fetch it in parallel so the @import resolves from cache instead of the network. -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" />
     <!-- Blocking on purpose: defines --header-h/--panel-w/--footer-padding-y, which Tailwind
          arbitrary values consume directly. Deferring this causes a full-page layout shift once
          it finally loads (verified in prod: CLS 0.0001 -> 0.76 when this was made non-blocking). -->
