@@ -71,11 +71,13 @@ export default function App() {
   const mainRef = useRef<HTMLElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const zoomBarRef = useRef<HTMLDivElement>(null);
+  const actionsBarRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
   const [maxZoom, setMaxZoom] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [styleDrawerOpen, setStyleDrawerOpen] = useState(false);
   const [zoomBarReserve, setZoomBarReserve] = useState<number | null>(null);
+  const [actionsBarReserve, setActionsBarReserve] = useState<number | null>(null);
 
   useEffect(() => {
     if (!sidebarOpen && !styleDrawerOpen) return;
@@ -104,8 +106,14 @@ export default function App() {
       const reserve = barRect && barRect.height > 0 ? paddingTop + mainEl!.getBoundingClientRect().bottom - barRect.top : null;
       setZoomBarReserve(reserve);
 
+      const actionsRect = actionsBarRef.current?.getBoundingClientRect();
+      const actionsReserve =
+        actionsRect && actionsRect.height > 0 ? paddingTop + mainEl!.getBoundingClientRect().bottom - actionsRect.top : null;
+      setActionsBarReserve(actionsReserve);
+
+      const bottomReserve = Math.max(reserve ?? 0, actionsReserve ?? 0) || null;
       const availableWidth = mainEl!.clientWidth - parseFloat(mainStyle.paddingLeft) - parseFloat(mainStyle.paddingRight);
-      const availableHeight = mainEl!.clientHeight - paddingTop - (reserve ?? parseFloat(mainStyle.paddingBottom));
+      const availableHeight = mainEl!.clientHeight - paddingTop - (bottomReserve ?? parseFloat(mainStyle.paddingBottom));
       const naturalWidth = previewEl!.offsetWidth;
       const naturalHeight = previewEl!.offsetHeight;
       if (naturalWidth === 0 || naturalHeight === 0) return;
@@ -119,6 +127,7 @@ export default function App() {
     observer.observe(mainEl);
     observer.observe(previewEl);
     if (zoomBarRef.current) observer.observe(zoomBarRef.current);
+    if (actionsBarRef.current) observer.observe(actionsBarRef.current);
     return () => observer.disconnect();
   }, [html, maxZoom > 1]);
 
@@ -189,13 +198,18 @@ export default function App() {
         <main
           ref={mainRef}
           className="relative flex min-h-0 min-w-0 flex-1 flex-col items-center-safe justify-center-safe overflow-y-auto bg-gray-50 p-4 md:p-6"
-          style={zoomBarReserve != null ? { paddingBottom: zoomBarReserve } : undefined}
+          style={
+            Math.max(zoomBarReserve ?? 0, actionsBarReserve ?? 0) > 0
+              ? { paddingBottom: Math.max(zoomBarReserve ?? 0, actionsBarReserve ?? 0) }
+              : undefined
+          }
         >
           <SignaturePreview
             html={html}
             onReset={() => updateFields(EMPTY_SIGNATURE_FIELDS)}
             onResetToDefault={() => applyState(DEFAULT_SIGNATURE_STATE)}
             measureRef={previewRef}
+            actionsBarRef={actionsBarRef}
             style={{ zoom }}
           />
 
