@@ -155,4 +155,65 @@ describe("buildSignatureHtml", () => {
     expect(html).toContain("padding:0 16px 0 0;vertical-align:top;");
     expect(html).not.toContain("padding:0 16px;vertical-align:top;");
   });
+
+  it("boxes the card template in a border using the accent color", () => {
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", title: "Engineer", avatarUrl: "acme.com/ada.jpg" },
+      "card",
+      "#4f46e5",
+    );
+    expect(html).toContain("border:2px solid #4f46e5;border-radius:8px;padding:16px;");
+    expect(html).toContain("Ada");
+    expect(html).toContain("Engineer");
+    expect(html).toContain('src="https://acme.com/ada.jpg"');
+  });
+
+  it("card template only draws the inner divider when there's contact info", () => {
+    const withContact = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", email: "ada@acme.com" },
+      "card",
+      "#000000",
+    );
+    const withoutContact = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "Ada" }, "card", "#000000");
+    expect(withContact).toContain("border-left:1px solid #dddddd;padding:0;width:1px;");
+    expect(withoutContact).not.toContain("border-left:1px solid #dddddd;padding:0;width:1px;");
+  });
+
+  it("banner template fills the header band with the accent color and renders name/title in white", () => {
+    const html = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "Ada", title: "Engineer" }, "banner", "#4f46e5");
+    expect(html).toContain("background-color:#4f46e5;padding:14px 16px;vertical-align:middle;");
+    expect(html).toContain('color:#ffffff;">Ada</div>');
+    expect(html).toContain("color:#ffffff;opacity:0.9;");
+  });
+
+  it("banner template gives the avatar a white border and its own accent-colored cell", () => {
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", avatarUrl: "acme.com/ada.jpg" },
+      "banner",
+      "#4f46e5",
+    );
+    expect(html).toContain("border:2px solid #ffffff;");
+    expect(html).toContain("background-color:#4f46e5;padding:14px 8px 14px 16px;vertical-align:middle;");
+  });
+
+  it("centered template center-aligns every block", () => {
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", title: "Engineer", email: "ada@acme.com" },
+      "centered",
+      "#000000",
+    );
+    expect(html).toContain('<td style="padding:0;text-align:center;">');
+    expect(html).not.toContain("vertical-align:top;");
+  });
+
+  it("centered template only renders the accent divider when there's contact info to divide from the name block", () => {
+    const withContact = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", email: "ada@acme.com" },
+      "centered",
+      "#4f46e5",
+    );
+    const withoutContact = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "Ada" }, "centered", "#4f46e5");
+    expect(withContact).toContain("width:32px;height:2px;background-color:#4f46e5;margin:10px auto;");
+    expect(withoutContact).not.toContain("width:32px;height:2px;background-color:#4f46e5;margin:10px auto;");
+  });
 });

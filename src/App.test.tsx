@@ -105,4 +105,68 @@ describe("App", () => {
       expect(Number(slider.max)).toBeCloseTo(2, 1);
     });
   });
+
+  describe("scroll to end", () => {
+    function overflowWith(scrollHeight: number, clientHeight: number, scrollTop = 0) {
+      const main = screen.getByRole("main");
+      Object.defineProperty(main, "clientHeight", { value: clientHeight, configurable: true });
+      Object.defineProperty(main, "scrollHeight", { value: scrollHeight, configurable: true });
+      Object.defineProperty(main, "scrollTop", { value: scrollTop, configurable: true });
+      const preview = main.firstElementChild as HTMLElement;
+      Object.defineProperty(preview, "offsetWidth", { value: 100, configurable: true });
+      Object.defineProperty(preview, "offsetHeight", { value: 100, configurable: true });
+      const observer = MockResizeObserver.instances[MockResizeObserver.instances.length - 1];
+      act(() => observer.callback([], observer as unknown as ResizeObserver));
+    }
+
+    it("only renders when the preview overflows the available height", () => {
+      render(<App />);
+      expect(screen.queryByLabelText(/Scroll to (top|bottom) of preview/)).not.toBeInTheDocument();
+      overflowWith(600, 300);
+      expect(screen.getByLabelText("Scroll to bottom of preview")).toBeInTheDocument();
+    });
+
+    it("scrolls to the bottom on click, then flips to scroll back to the top", async () => {
+      render(<App />);
+      overflowWith(600, 300, 0);
+      const main = screen.getByRole("main");
+      main.scrollTo = vi.fn((options: ScrollToOptions) => {
+        Object.defineProperty(main, "scrollTop", { value: options.top, configurable: true });
+        fireEvent.scroll(main);
+      }) as typeof main.scrollTo;
+
+      await userEvent.click(screen.getByLabelText("Scroll to bottom of preview"));
+      expect(main.scrollTo).toHaveBeenCalledWith({ top: 600, behavior: "smooth" });
+      expect(screen.getByLabelText("Scroll to top of preview")).toBeInTheDocument();
+
+      await userEvent.click(screen.getByLabelText("Scroll to top of preview"));
+      expect(main.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
+      expect(screen.getByLabelText("Scroll to bottom of preview")).toBeInTheDocument();
+    });
+  });
+
+  describe("style drawer", () => {
+    it("opens via its toggle and closes via Escape", async () => {
+      render(<App />);
+      const toggle = screen.getByRole("button", { name: "Toggle style panel" });
+      expect(toggle).toHaveAttribute("aria-expanded", "false");
+
+      await userEvent.click(toggle);
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+
+      fireEvent.keyDown(document, { key: "Escape" });
+      expect(toggle).toHaveAttribute("aria-expanded", "false");
+    });
+
+    it("closes via the shared backdrop click", async () => {
+      render(<App />);
+      const toggle = screen.getByRole("button", { name: "Toggle style panel" });
+      await userEvent.click(toggle);
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+
+      const backdrop = document.querySelector('[aria-hidden="true"]') as HTMLElement;
+      await userEvent.click(backdrop);
+      expect(toggle).toHaveAttribute("aria-expanded", "false");
+    });
+  });
 });
