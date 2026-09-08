@@ -188,7 +188,7 @@ export default function App() {
 
         <main
           ref={mainRef}
-          className="relative flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center overflow-y-auto bg-gray-50 p-4 md:p-6"
+          className="relative flex min-h-0 min-w-0 flex-1 flex-col items-center-safe justify-center-safe overflow-y-auto bg-gray-50 p-4 md:p-6"
           style={zoomBarReserve != null ? { paddingBottom: zoomBarReserve } : undefined}
         >
           <SignaturePreview
