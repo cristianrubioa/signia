@@ -26,4 +26,11 @@ describe("signatureYaml", () => {
   it("rejects malformed YAML", () => {
     expect(() => fromYamlDocument("not: valid: yaml: [")).toThrow(YamlValidationError);
   });
+
+  it("ignores a __proto__ section without polluting the global object prototype", () => {
+    const yaml = `__proto__:\n  polluted: true\n${toYamlDocument(DEFAULT_SIGNATURE_STATE)}`;
+    expect(fromYamlDocument(yaml)).toEqual(DEFAULT_SIGNATURE_STATE);
+    expect(Object.prototype).not.toHaveProperty("polluted");
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+  });
 });
