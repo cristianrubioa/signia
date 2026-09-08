@@ -74,16 +74,20 @@ export default function App() {
   const [zoom, setZoom] = useState(1);
   const [maxZoom, setMaxZoom] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [styleDrawerOpen, setStyleDrawerOpen] = useState(false);
   const [zoomBarReserve, setZoomBarReserve] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!sidebarOpen) return;
+    if (!sidebarOpen && !styleDrawerOpen) return;
     function handleEscape(e: KeyboardEvent) {
-      if (e.key === "Escape") setSidebarOpen(false);
+      if (e.key === "Escape") {
+        setSidebarOpen(false);
+        setStyleDrawerOpen(false);
+      }
     }
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [sidebarOpen]);
+  }, [sidebarOpen, styleDrawerOpen]);
 
   // One measurement pass for both values: a two-effect split previously let maxZoom
   // race ahead of the zoom bar's padding, letting the scaled card overlap the bar.
@@ -133,17 +137,20 @@ export default function App() {
         </button>
         <i className="fa-solid fa-signature text-2xl text-teal-700" />
         <span className="font-semibold leading-none tracking-wide text-[length:var(--app-name-size)]">Signia</span>
-        <span className="text-sm font-normal text-gray-600">Email Signature Generator</span>
+        <span className="hidden text-sm font-normal text-gray-600 md:inline">Email Signature Generator</span>
         <a className="crubio-home-link" href="https://crubio.fyi">
           crubio.fyi
         </a>
       </header>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:pl-[var(--panel-w)] xl:flex-row xl:overflow-visible">
-        {sidebarOpen && (
+      <div className="flex min-h-0 flex-1 flex-col overflow-visible md:pl-[var(--panel-w)] xl:flex-row">
+        {(sidebarOpen || styleDrawerOpen) && (
           <div
-            className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-30 bg-black/50 md:hidden"
-            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-30 bg-black/50 xl:hidden"
+            onClick={() => {
+              setSidebarOpen(false);
+              setStyleDrawerOpen(false);
+            }}
             aria-hidden="true"
           />
         )}
@@ -181,7 +188,7 @@ export default function App() {
 
         <main
           ref={mainRef}
-          className="relative flex min-w-0 flex-col items-center justify-center overflow-visible bg-gray-50 p-4 md:p-6 xl:flex-1 xl:overflow-y-auto"
+          className="relative flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center overflow-y-auto bg-gray-50 p-4 md:p-6"
           style={zoomBarReserve != null ? { paddingBottom: zoomBarReserve } : undefined}
         >
           <SignaturePreview
@@ -214,8 +221,23 @@ export default function App() {
           )}
         </main>
 
-        <aside className="flex w-full shrink-0 flex-col border-t border-gray-200 xl:w-[var(--panel-w)] xl:border-l xl:border-t-0">
-          <div className="flex-1 overflow-visible p-6 xl:overflow-y-auto">
+        <aside
+          id="signature-style-drawer"
+          className={`fixed bottom-0 right-0 top-[var(--header-h)] z-40 flex w-[var(--panel-w)] shrink-0 flex-col border-l border-gray-200 bg-white transition-transform duration-200 ease-out xl:static xl:translate-x-0 xl:transition-none ${
+            styleDrawerOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <button
+            type="button"
+            onClick={() => setStyleDrawerOpen((o) => !o)}
+            aria-label="Toggle style panel"
+            aria-expanded={styleDrawerOpen}
+            className="absolute right-full top-1/2 -translate-y-1/2 rounded-l-lg border border-r-0 border-gray-200 bg-white p-2 text-gray-600 shadow-sm xl:hidden"
+          >
+            <i className={`fa-solid fa-chevron-left transition-transform ${styleDrawerOpen ? "rotate-180" : ""}`} />
+          </button>
+
+          <div className="flex-1 overflow-y-auto p-6">
             <SignatureStylePanel
               fields={fields}
               onFieldsChange={updateFields}
@@ -223,6 +245,7 @@ export default function App() {
               onTemplateChange={updateTemplate}
               accentColor={accentColor}
               onAccentColorChange={updateAccentColor}
+              onCommit={() => setStyleDrawerOpen(false)}
             />
           </div>
         </aside>
