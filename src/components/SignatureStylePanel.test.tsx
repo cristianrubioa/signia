@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import SignatureStylePanel from "./SignatureStylePanel";
 import { DEFAULT_ACCENT_COLOR, EMPTY_SIGNATURE_FIELDS } from "../lib/signature";
+import SignatureStylePanel from "./SignatureStylePanel";
 
 function renderPanel(overrides: Partial<React.ComponentProps<typeof SignatureStylePanel>> = {}) {
   const props = {

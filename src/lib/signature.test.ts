@@ -17,19 +17,23 @@ describe("buildSignatureHtml", () => {
     const labelOnly = buildSignatureHtml(
       { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", additionalLinkLabel: "Blog" },
       "horizontal",
-      "#000000"
+      "#000000",
     );
     const urlOnly = buildSignatureHtml(
       { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", additionalLinkUrl: "ada.dev" },
       "horizontal",
-      "#000000"
+      "#000000",
     );
     expect(labelOnly).not.toContain("Blog");
     expect(urlOnly).not.toContain("ada.dev");
   });
 
   it("escapes HTML in user-provided fields", () => {
-    const html = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "<script>alert(1)</script>" }, "stacked", "#000000");
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "<script>alert(1)</script>" },
+      "stacked",
+      "#000000",
+    );
     expect(html).not.toContain("<script>");
     expect(html).toContain("&lt;script&gt;");
   });
@@ -49,7 +53,7 @@ describe("buildSignatureHtml", () => {
         additionalLinkUrl: "ada.dev",
       },
       "accent-bar",
-      "#4f46e5"
+      "#4f46e5",
     );
     expect(html).not.toMatch(/<link/i);
     expect(html).not.toMatch(/<style/i);
@@ -69,7 +73,7 @@ describe("buildSignatureHtml", () => {
     const html = buildSignatureHtml(
       { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", avatarUrl: "acme.com/ada.jpg" },
       "stacked",
-      "#000000"
+      "#000000",
     );
     expect(html).toContain('src="https://acme.com/ada.jpg"');
   });
@@ -78,7 +82,7 @@ describe("buildSignatureHtml", () => {
     const html = buildSignatureHtml(
       { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", fontFamily: "Georgia, 'Times New Roman', serif" },
       "accent-bar",
-      "#000000"
+      "#000000",
     );
     expect(html).toContain("font-family:Georgia, 'Times New Roman', serif;");
   });
@@ -93,7 +97,7 @@ describe("buildSignatureHtml", () => {
     const html = buildSignatureHtml(
       { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", linkedinUrl: "linkedin.com/in/ada", facebookUrl: "facebook.com/ada" },
       "horizontal",
-      "#000000"
+      "#000000",
     );
     expect(html).toContain("bootstrap-icons@1.11.3/icons/linkedin.svg");
     expect(html).toContain("bootstrap-icons@1.11.3/icons/facebook.svg");
@@ -104,20 +108,28 @@ describe("buildSignatureHtml", () => {
     const html = buildSignatureHtml(
       { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", address: "1 Memorial Dr, Cambridge, MA" },
       "horizontal",
-      "#000000"
+      "#000000",
     );
     expect(html).toContain("1 Memorial Dr, Cambridge, MA");
     expect(html).not.toContain("<a href");
   });
 
   it("renders a generic icon (not a brand icon) for the website field", () => {
-    const html = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "Ada", website: "acme.com" }, "horizontal", "#000000");
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", website: "acme.com" },
+      "horizontal",
+      "#000000",
+    );
     expect(html).toContain("bootstrap-icons@1.11.3/icons/globe.svg");
     expect(html).toContain("https://acme.com");
   });
 
   it("defaults to the default font size when unset", () => {
-    const html = buildSignatureHtml({ ...EMPTY_SIGNATURE_FIELDS, name: "Ada", title: "Engineer" }, "horizontal", "#000000");
+    const html = buildSignatureHtml(
+      { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", title: "Engineer" },
+      "horizontal",
+      "#000000",
+    );
     expect(html).toContain("font-size:16px");
     expect(html).toContain("font-size:13px");
   });
@@ -126,7 +138,7 @@ describe("buildSignatureHtml", () => {
     const html = buildSignatureHtml(
       { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", title: "Engineer", fontSize: "larger" },
       "horizontal",
-      "#000000"
+      "#000000",
     );
     expect(html).toContain("font-size:18px");
     expect(html).toContain("font-size:15px");
@@ -138,9 +150,9 @@ describe("buildSignatureHtml", () => {
     const html = buildSignatureHtml(
       { ...EMPTY_SIGNATURE_FIELDS, name: "Ada", avatarUrl: "acme.com/ada.jpg" },
       "accent-bar",
-      "#000000"
+      "#000000",
     );
-    expect(html).toContain('padding:0 16px 0 0;vertical-align:top;');
-    expect(html).not.toContain('padding:0 16px;vertical-align:top;');
+    expect(html).toContain("padding:0 16px 0 0;vertical-align:top;");
+    expect(html).not.toContain("padding:0 16px;vertical-align:top;");
   });
 });

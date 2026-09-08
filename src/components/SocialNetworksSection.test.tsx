@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import SocialNetworksSection from "./SocialNetworksSection";
 import { EMPTY_SIGNATURE_FIELDS } from "../lib/signature";
+import SocialNetworksSection from "./SocialNetworksSection";
 
 describe("SocialNetworksSection", () => {
   it("adds a network's field via the picker", async () => {
@@ -21,7 +21,7 @@ describe("SocialNetworksSection", () => {
       <SocialNetworksSection
         fields={{ ...EMPTY_SIGNATURE_FIELDS, facebookUrl: "facebook.com/ada" }}
         onFieldsChange={onFieldsChange}
-      />
+      />,
     );
 
     await userEvent.click(screen.getByRole("button", { name: "Remove Facebook" }));
@@ -36,7 +36,7 @@ describe("SocialNetworksSection", () => {
       <SocialNetworksSection
         fields={{ ...EMPTY_SIGNATURE_FIELDS, additionalLinkLabel: "Portfolio" }}
         onFieldsChange={onFieldsChange}
-      />
+      />,
     );
 
     await userEvent.type(screen.getByPlaceholderText("ada.dev"), "x");

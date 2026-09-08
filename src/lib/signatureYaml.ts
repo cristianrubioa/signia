@@ -1,7 +1,7 @@
 import { dump, load } from "js-yaml";
 import {
-  SIGNATURE_TEMPLATES,
   FONT_SIZE_OPTIONS,
+  SIGNATURE_TEMPLATES,
   type SignatureFontSize,
   type SignatureState,
   type SignatureTemplate,

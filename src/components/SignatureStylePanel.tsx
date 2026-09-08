@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import {
   ACCENT_COLOR_SWATCHES,
   FONT_FAMILY_OPTIONS,
@@ -38,6 +38,7 @@ function Dropdown({
   options: { value: string; label: string }[];
   onCommit: () => void;
 }) {
+  const id = useId();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -54,15 +55,21 @@ function Dropdown({
 
   return (
     <div>
-      <label className={LABEL_CLASS}>{label}</label>
+      <label htmlFor={id} className={LABEL_CLASS}>
+        {label}
+      </label>
       <div className="relative" ref={menuRef}>
         <button
+          id={id}
           type="button"
           onClick={() => setOpen((o) => !o)}
+          aria-label={`${label}: ${selected?.label ?? ""}`}
           className={`${INPUT_CLASS} flex items-center justify-between text-left transition-colors hover:bg-gray-50`}
         >
           <span>{selected?.label}</span>
-          <i className={`fa-solid fa-chevron-down text-xs text-gray-400 transition-transform ${open ? "rotate-180" : ""}`} />
+          <i
+            className={`fa-solid fa-chevron-down text-xs text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}
+          />
         </button>
         {open && (
           <div className="absolute z-10 mt-1.5 w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
@@ -100,10 +107,20 @@ function UrlField({
   placeholder?: string;
   helper?: string;
 }) {
+  const id = useId();
   return (
     <div>
-      <label className={LABEL_CLASS}>{label}</label>
-      <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className={INPUT_CLASS} />
+      <label htmlFor={id} className={LABEL_CLASS}>
+        {label}
+      </label>
+      <input
+        id={id}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={INPUT_CLASS}
+      />
       {helper && <p className="mt-1 text-xs text-gray-400">{helper}</p>}
     </div>
   );

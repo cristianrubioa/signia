@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { type SignatureFields } from "../lib/signature";
+import { useEffect, useId, useRef, useState } from "react";
+import type { SignatureFields } from "../lib/signature";
 
 interface Props {
   fields: SignatureFields;
@@ -35,10 +35,13 @@ function Field({
   placeholder?: string;
   onRemove?: () => void;
 }) {
+  const id = useId();
   return (
     <div>
       <div className="mb-1.5 flex items-center justify-between">
-        <label className={LABEL_CLASS}>{label}</label>
+        <label htmlFor={id} className={LABEL_CLASS}>
+          {label}
+        </label>
         {onRemove && (
           <button
             type="button"
@@ -50,16 +53,23 @@ function Field({
           </button>
         )}
       </div>
-      <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className={INPUT_CLASS} />
+      <input
+        id={id}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={INPUT_CLASS}
+      />
     </div>
   );
 }
 
 export default function SocialNetworksSection({ fields, onFieldsChange }: Props) {
   const [addedKeys, setAddedKeys] = useState<SocialOption["key"][]>(() => {
-    const keys = SOCIAL_OPTIONS.filter(
-      (option) => option.kind === "network" && fields[option.key].trim()
-    ).map((option) => option.key);
+    const keys = SOCIAL_OPTIONS.filter((option) => option.kind === "network" && fields[option.key].trim()).map(
+      (option) => option.key,
+    );
     if (fields.additionalLinkLabel.trim() || fields.additionalLinkUrl.trim()) keys.push("custom");
     return keys;
   });
@@ -96,7 +106,12 @@ export default function SocialNetworksSection({ fields, onFieldsChange }: Props)
       <p className="crubio-section-label text-teal-700 mb-2">Social networks</p>
       <div className="flex flex-col gap-3">
         <Field label="Website" value={fields.website} onChange={(v) => update("website", v)} placeholder="acme.com" />
-        <Field label="LinkedIn" value={fields.linkedinUrl} onChange={(v) => update("linkedinUrl", v)} placeholder="linkedin.com/in/ada" />
+        <Field
+          label="LinkedIn"
+          value={fields.linkedinUrl}
+          onChange={(v) => update("linkedinUrl", v)}
+          placeholder="linkedin.com/in/ada"
+        />
 
         {addedOptions.map((option) =>
           option.kind === "custom" ? (
@@ -124,7 +139,7 @@ export default function SocialNetworksSection({ fields, onFieldsChange }: Props)
               placeholder={option.placeholder}
               onRemove={() => removeKey(option.key)}
             />
-          )
+          ),
         )}
 
         {remainingOptions.length > 0 && (

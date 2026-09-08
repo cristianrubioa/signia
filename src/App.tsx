@@ -97,7 +97,8 @@ export default function App() {
     function recalc() {
       const mainStyle = getComputedStyle(mainEl!);
       const paddingTop = parseFloat(mainStyle.paddingTop);
-      const availableWidth = mainEl!.clientWidth - parseFloat(mainStyle.paddingLeft) - parseFloat(mainStyle.paddingRight);
+      const availableWidth =
+        mainEl!.clientWidth - parseFloat(mainStyle.paddingLeft) - parseFloat(mainStyle.paddingRight);
       const availableHeight = mainEl!.clientHeight - paddingTop - parseFloat(mainStyle.paddingBottom);
       const naturalWidth = previewEl!.offsetWidth;
       const naturalHeight = previewEl!.offsetHeight;
@@ -125,7 +126,7 @@ export default function App() {
       observer.disconnect();
       mainEl.removeEventListener("scroll", updateScrollPosition);
     };
-  }, [html]);
+  }, []);
 
   return (
     <div className="flex h-dvh flex-col bg-white">
@@ -170,14 +171,14 @@ export default function App() {
             <div className="pb-5">
               <SignatureForm fields={fields} onFieldsChange={updateFields} />
             </div>
-            <ImportExportSection
-              state={{ fields, template, accentColor }}
-              onImport={applyState}
-            />
+            <ImportExportSection state={{ fields, template, accentColor }} onImport={applyState} />
           </div>
           <div
             className="mt-auto border-t border-gray-200 px-6 text-center text-sm text-gray-600"
-            style={{ paddingTop: "var(--footer-padding-y, 0.75rem)", paddingBottom: "var(--footer-padding-y, 0.75rem)" }}
+            style={{
+              paddingTop: "var(--footer-padding-y, 0.75rem)",
+              paddingBottom: "var(--footer-padding-y, 0.75rem)",
+            }}
           >
             Made with <span className="text-base text-red-400">♥</span> by{" "}
             <a

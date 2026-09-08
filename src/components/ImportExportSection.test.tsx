@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import ImportExportSection from "./ImportExportSection";
 import { DEFAULT_SIGNATURE_STATE } from "../lib/signature";
 import { toYamlDocument } from "../lib/signatureYaml";
+import ImportExportSection from "./ImportExportSection";
 
 describe("ImportExportSection", () => {
   beforeEach(() => {

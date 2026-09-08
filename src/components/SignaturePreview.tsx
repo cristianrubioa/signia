@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties, type RefObject } from "react";
+import { type CSSProperties, type RefObject, useEffect, useState } from "react";
 
 interface Props {
   html: string;

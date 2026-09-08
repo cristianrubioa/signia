@@ -46,7 +46,7 @@ describe("App", () => {
   it("loads persisted state from localStorage on mount, in place of demo content", async () => {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ fields: { name: "Grace Hopper" }, template: "stacked", accentColor: "#123456" })
+      JSON.stringify({ fields: { name: "Grace Hopper" }, template: "stacked", accentColor: "#123456" }),
     );
     vi.resetModules();
     const { default: FreshApp } = await import("./App");
