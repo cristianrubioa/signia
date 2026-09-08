@@ -80,7 +80,7 @@ export default function SignaturePreview({ html, measureRef, style }: Props) {
         </div>
 
         {html ? (
-          <iframe title="Signature preview" srcDoc={previewDocument(html)} className="mt-10 h-80 w-full" />
+          <iframe title="Signature preview" srcDoc={previewDocument(html)} sandbox="" className="mt-10 h-80 w-full" />
         ) : (
           <div className="mt-10 flex h-80 items-center justify-center text-sm text-gray-400">
             Enter your name to see a preview
