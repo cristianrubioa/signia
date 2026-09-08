@@ -74,6 +74,8 @@ export default function App() {
   const [maxZoom, setMaxZoom] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [styleDrawerOpen, setStyleDrawerOpen] = useState(false);
+  const [previewOverflows, setPreviewOverflows] = useState(false);
+  const [scrolledToEnd, setScrolledToEnd] = useState(false);
 
   useEffect(() => {
     if (!sidebarOpen && !styleDrawerOpen) return;
@@ -103,13 +105,26 @@ export default function App() {
       const next = Math.max(1, Math.min(availableWidth / naturalWidth, availableHeight / naturalHeight));
       setMaxZoom(next);
       setZoom((z) => Math.min(z, next));
+      setPreviewOverflows(mainEl!.scrollHeight > mainEl!.clientHeight + 1);
+    }
+
+    function updateScrollPosition() {
+      setScrolledToEnd(mainEl!.scrollTop + mainEl!.clientHeight >= mainEl!.scrollHeight - 2);
     }
 
     recalc();
-    const observer = new ResizeObserver(recalc);
+    updateScrollPosition();
+    const observer = new ResizeObserver(() => {
+      recalc();
+      updateScrollPosition();
+    });
     observer.observe(mainEl);
     observer.observe(previewEl);
-    return () => observer.disconnect();
+    mainEl.addEventListener("scroll", updateScrollPosition);
+    return () => {
+      observer.disconnect();
+      mainEl.removeEventListener("scroll", updateScrollPosition);
+    };
   }, [html]);
 
   return (
@@ -207,6 +222,21 @@ export default function App() {
                 </button>
               </div>
               <div className="flex justify-end">
+                {previewOverflows && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      mainRef.current?.scrollTo({
+                        top: scrolledToEnd ? 0 : mainRef.current.scrollHeight,
+                        behavior: "smooth",
+                      })
+                    }
+                    aria-label={scrolledToEnd ? "Scroll to top of preview" : "Scroll to bottom of preview"}
+                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm md:hidden"
+                  >
+                    <i className={`fa-solid ${scrolledToEnd ? "fa-chevron-up" : "fa-chevron-down"}`} />
+                  </button>
+                )}
                 {maxZoom > 1 && (
                   <div className="hidden items-center gap-3 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm md:flex">
                     <i className="fa-solid fa-magnifying-glass-minus text-xs text-gray-400" />
