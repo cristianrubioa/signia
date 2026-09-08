@@ -18,7 +18,7 @@ export interface SignatureFields {
   youtubeUrl: string;
 }
 
-export const FONT_STACK = "Arial, Helvetica, sans-serif";
+const FONT_STACK = "Arial, Helvetica, sans-serif";
 
 export type SignatureFontSize = "default" | "larger";
 
@@ -27,7 +27,7 @@ export const FONT_SIZE_OPTIONS: { value: SignatureFontSize; label: string }[] = 
   { value: "larger", label: "Larger" },
 ];
 
-export const SIZE_SCALE: Record<SignatureFontSize, { name: number; sub: number }> = {
+const SIZE_SCALE: Record<SignatureFontSize, { name: number; sub: number }> = {
   default: { name: 16, sub: 13 },
   larger: { name: 18, sub: 15 },
 };
@@ -52,7 +52,7 @@ export const EMPTY_SIGNATURE_FIELDS: SignatureFields = {
   youtubeUrl: "",
 };
 
-export const DEMO_SIGNATURE_FIELDS: SignatureFields = {
+const DEMO_SIGNATURE_FIELDS: SignatureFields = {
   ...EMPTY_SIGNATURE_FIELDS,
   name: "Ada Lovelace",
   title: "Software Engineer",
