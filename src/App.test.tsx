@@ -67,6 +67,19 @@ describe("App", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 
+  it("clears the content fields when Clear is clicked, without touching template/color", async () => {
+    render(<App />);
+    await userEvent.click(screen.getByRole("button", { name: /Clear/ }));
+    expect(screen.getByPlaceholderText("Ada Lovelace")).toHaveValue("");
+  });
+
+  it("restores the default demo state when Reset is clicked", async () => {
+    render(<App />);
+    await userEvent.type(screen.getByPlaceholderText("Ada Lovelace"), "!");
+    await userEvent.click(screen.getByRole("button", { name: /Reset/ }));
+    expect(screen.getByDisplayValue("Ada Lovelace")).toBeInTheDocument();
+  });
+
   describe("zoom ceiling", () => {
     function recalcWith(mainW: number, mainH: number, previewW: number, previewH: number) {
       const main = screen.getByRole("main");

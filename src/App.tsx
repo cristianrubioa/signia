@@ -70,14 +70,10 @@ export default function App() {
 
   const mainRef = useRef<HTMLElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
-  const zoomBarRef = useRef<HTMLDivElement>(null);
-  const actionsBarRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
   const [maxZoom, setMaxZoom] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [styleDrawerOpen, setStyleDrawerOpen] = useState(false);
-  const [zoomBarReserve, setZoomBarReserve] = useState<number | null>(null);
-  const [actionsBarReserve, setActionsBarReserve] = useState<number | null>(null);
 
   useEffect(() => {
     if (!sidebarOpen && !styleDrawerOpen) return;
@@ -91,8 +87,6 @@ export default function App() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [sidebarOpen, styleDrawerOpen]);
 
-  // One measurement pass for both values: a two-effect split previously let maxZoom
-  // race ahead of the zoom bar's padding, letting the scaled card overlap the bar.
   useEffect(() => {
     const mainEl = mainRef.current;
     const previewEl = previewRef.current;
@@ -101,19 +95,8 @@ export default function App() {
     function recalc() {
       const mainStyle = getComputedStyle(mainEl!);
       const paddingTop = parseFloat(mainStyle.paddingTop);
-
-      const barRect = zoomBarRef.current?.getBoundingClientRect();
-      const reserve = barRect && barRect.height > 0 ? paddingTop + mainEl!.getBoundingClientRect().bottom - barRect.top : null;
-      setZoomBarReserve(reserve);
-
-      const actionsRect = actionsBarRef.current?.getBoundingClientRect();
-      const actionsReserve =
-        actionsRect && actionsRect.height > 0 ? paddingTop + mainEl!.getBoundingClientRect().bottom - actionsRect.top : null;
-      setActionsBarReserve(actionsReserve);
-
-      const bottomReserve = Math.max(reserve ?? 0, actionsReserve ?? 0) || null;
       const availableWidth = mainEl!.clientWidth - parseFloat(mainStyle.paddingLeft) - parseFloat(mainStyle.paddingRight);
-      const availableHeight = mainEl!.clientHeight - paddingTop - (bottomReserve ?? parseFloat(mainStyle.paddingBottom));
+      const availableHeight = mainEl!.clientHeight - paddingTop - parseFloat(mainStyle.paddingBottom);
       const naturalWidth = previewEl!.offsetWidth;
       const naturalHeight = previewEl!.offsetHeight;
       if (naturalWidth === 0 || naturalHeight === 0) return;
@@ -126,13 +109,11 @@ export default function App() {
     const observer = new ResizeObserver(recalc);
     observer.observe(mainEl);
     observer.observe(previewEl);
-    if (zoomBarRef.current) observer.observe(zoomBarRef.current);
-    if (actionsBarRef.current) observer.observe(actionsBarRef.current);
     return () => observer.disconnect();
-  }, [html, maxZoom > 1]);
+  }, [html]);
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-dvh flex-col bg-white">
       <header className="flex h-[var(--header-h)] shrink-0 items-center gap-3 border-b border-gray-200 px-6">
         <button
           type="button"
@@ -195,45 +176,58 @@ export default function App() {
           </div>
         </aside>
 
-        <main
-          ref={mainRef}
-          className="relative flex min-h-0 min-w-0 flex-1 flex-col items-center-safe justify-center-safe overflow-y-auto bg-gray-50 p-4 md:p-6"
-          style={
-            Math.max(zoomBarReserve ?? 0, actionsBarReserve ?? 0) > 0
-              ? { paddingBottom: Math.max(zoomBarReserve ?? 0, actionsBarReserve ?? 0) }
-              : undefined
-          }
-        >
-          <SignaturePreview
-            html={html}
-            onReset={() => updateFields(EMPTY_SIGNATURE_FIELDS)}
-            onResetToDefault={() => applyState(DEFAULT_SIGNATURE_STATE)}
-            measureRef={previewRef}
-            actionsBarRef={actionsBarRef}
-            style={{ zoom }}
-          />
+        <div className="flex min-h-0 flex-1 flex-col">
+          <main
+            ref={mainRef}
+            className="flex min-h-0 min-w-0 flex-1 flex-col items-center-safe justify-center-safe overflow-y-auto bg-gray-50 p-4 md:p-6"
+          >
+            <SignaturePreview html={html} measureRef={previewRef} style={{ zoom }} />
+          </main>
 
-          {maxZoom > 1 && (
-            <div
-              ref={zoomBarRef}
-              className="absolute bottom-4 right-4 hidden items-center gap-3 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm md:flex"
-            >
-              <i className="fa-solid fa-magnifying-glass-minus text-xs text-gray-400" />
-              <input
-                type="range"
-                min={1}
-                max={maxZoom}
-                step={0.01}
-                value={zoom}
-                onChange={(e) => setZoom(Number(e.target.value))}
-                className="w-32 accent-teal-600"
-                aria-label="Zoom preview"
-              />
-              <i className="fa-solid fa-magnifying-glass-plus text-xs text-gray-400" />
-              <span className="w-10 text-right text-xs font-medium text-gray-600">{Math.round(zoom * 100)}%</span>
+          <div className="flex shrink-0 flex-col items-center gap-3 bg-gray-50 py-3">
+            <div className="h-px w-4/5 bg-gray-200" />
+            <div className="grid w-full grid-cols-3 items-center px-4">
+              <div />
+              <div className="flex justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => updateFields(EMPTY_SIGNATURE_FIELDS)}
+                  className="flex w-28 shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+                >
+                  <i className="fa-solid fa-eraser text-base" />
+                  Clear
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyState(DEFAULT_SIGNATURE_STATE)}
+                  className="flex w-28 shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+                >
+                  <i className="fa-solid fa-rotate-left text-base" />
+                  Reset
+                </button>
+              </div>
+              <div className="flex justify-end">
+                {maxZoom > 1 && (
+                  <div className="hidden items-center gap-3 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm md:flex">
+                    <i className="fa-solid fa-magnifying-glass-minus text-xs text-gray-400" />
+                    <input
+                      type="range"
+                      min={1}
+                      max={maxZoom}
+                      step={0.01}
+                      value={zoom}
+                      onChange={(e) => setZoom(Number(e.target.value))}
+                      className="w-32 accent-teal-600"
+                      aria-label="Zoom preview"
+                    />
+                    <i className="fa-solid fa-magnifying-glass-plus text-xs text-gray-400" />
+                    <span className="w-10 text-right text-xs font-medium text-gray-600">{Math.round(zoom * 100)}%</span>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-        </main>
+          </div>
+        </div>
 
         <aside
           id="signature-style-drawer"
