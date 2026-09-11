@@ -130,7 +130,10 @@ export default function App() {
 
   return (
     <div className="flex h-dvh flex-col bg-white">
-      <header className="flex h-[var(--header-h)] shrink-0 items-center gap-3 border-b border-gray-200 px-6">
+      <header
+        className="flex h-[var(--header-h)] shrink-0 items-center border-b border-gray-200 px-6"
+        style={{ gap: "var(--header-gap, 0.75rem)" }}
+      >
         <button
           type="button"
           onClick={() => setSidebarOpen((o) => !o)}
@@ -139,7 +142,7 @@ export default function App() {
           aria-controls="signature-form-sidebar"
           className="-ml-2 p-2 text-gray-600 md:hidden"
         >
-          <i className="fa-solid fa-bars" />
+          <i className="fa-solid fa-bars" style={{ fontSize: "var(--hamburger-icon-size, 1.25rem)" }} />
         </button>
         <i className="fa-solid fa-signature text-2xl text-teal-700" />
         <span className="font-semibold leading-none tracking-wide text-[length:var(--app-name-size)]">Signia</span>
@@ -174,8 +177,9 @@ export default function App() {
             <ImportExportSection state={{ fields, template, accentColor }} onImport={applyState} />
           </div>
           <div
-            className="mt-auto border-t border-gray-200 px-6 text-center text-sm text-gray-600"
+            className="mt-auto border-t border-gray-200 px-6 text-center text-sm"
             style={{
+              color: "var(--footer-text-color, #4b5563)",
               paddingTop: "var(--footer-padding-y, 0.75rem)",
               paddingBottom: "var(--footer-padding-y, 0.75rem)",
             }}
