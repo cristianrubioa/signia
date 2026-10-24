@@ -27,9 +27,6 @@ npm run dev      # http://localhost:5173
 | `npm run lint`       | Lint with oxlint                      |
 | `npm run test`       | Tests with Vitest (80% coverage floor) |
 
-## Stack
-
-React 19 + TypeScript + Vite + Tailwind 4. No backend: signature data is stored in the browser's `localStorage`. The only runtime dependency beyond React is `js-yaml`, used for config import/export.
 
 ## Deploy
 
