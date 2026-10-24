@@ -144,7 +144,7 @@ export default function App() {
         >
           <i className="fa-solid fa-bars" style={{ fontSize: "var(--hamburger-icon-size, 1.25rem)" }} />
         </button>
-        <i className="fa-solid fa-signature text-2xl text-teal-700" />
+        <img src="/favicon.svg" alt="" style={{ height: "var(--logo-size)", width: "auto" }} />
         <span className="font-semibold leading-none tracking-wide text-[length:var(--app-name-size)]">Signia</span>
         <span className="hidden text-sm font-normal text-gray-600 md:inline">Email Signature Generator</span>
         <a className="crubio-home-link" href="https://crubio.fyi">
